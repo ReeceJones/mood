@@ -10,11 +10,17 @@
         <link href="https://reece.ooo/bulma.css" rel="stylesheet"/>
     </head>
     <body>
-        <div class="section">
+        <section class="hero is-info is-medium">
+            <div class="hero-body">
+                <div class="container">
+                        <p class="title"><?D output("hello from mood!"); /?></p>
+                        <p class="subtitle">Host CPU: <?D output(processor()); /?> </p>
+                </div>
+            </div>
+        </section>
+        <section class="section">
             <div class="container">
                 <article class="content">
-                    <p class="title"><?D output("hello from mood!"); /?></p>
-                    <p class="subtitle">Host CPU: <?D output(processor()); /?> </p>
                     <strong>URI: <?D output(req.requestURI); /?></strong>
                     <ul>
                         <?D
