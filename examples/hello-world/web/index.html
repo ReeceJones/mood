@@ -3,6 +3,8 @@
     <?D
         import std.conv: text;
         import core.cpuid;
+        import mood.templates;
+
         bool b = true;
     /?>
     <head>
@@ -18,7 +20,7 @@
                 </div>
             </div>
         </section>
-        <include:Foo.html/>
+        <include:includes/Foo.html/>
         <section class="section">
             <div class="container">
                 <article class="content">
@@ -26,7 +28,7 @@
                     <ul>
                         <?D
                             for (int i = 0; i < 10; i++)
-                                output("<li>", i, "</li>");
+                                output("hello world".li(`class="has-text-danger"`));
                         /?>
                     </ul>
                 </article>
