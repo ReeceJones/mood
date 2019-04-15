@@ -12,7 +12,7 @@ string serve(Document doc, HTTPServerRequest req, HTTPServerResponse res)
     string output;
     string[] programOutput;
     doc.fn(programOutput, req, res);
-    writeln(programOutput);
+    // writeln(programOutput);
     foreach(dn; doc.nodes)
     {
         if (dn.code)
