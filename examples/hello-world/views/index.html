@@ -28,7 +28,11 @@
                     <ul>
                         <?D
                             for (int i = 0; i < 10; i++)
-                                output("hello world".li(`class="has-text-danger"`));
+                            {
+                                output("hello world".li([
+                                    `class`: `"has-text-danger"`
+                                ]));
+                            }
                         /?>
                     </ul>
                 </article>

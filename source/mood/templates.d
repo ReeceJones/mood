@@ -1,5 +1,7 @@
 module mood.templates;
 
+import std.array: byPair;
+
 private string generateTemplates(string[] tags)()
 {
     string code;
@@ -7,6 +9,21 @@ private string generateTemplates(string[] tags)()
     {
         // default
         code ~= `string ` ~ tag ~ `(string content, string attributes = "") { return "<` ~ tag ~ ` " ~ attributes ~ ">" ~ content ~ "</` ~ tag ~ `>"; }` ~ "\n";
+        code ~= `string ` ~ tag ~ `(string content, string[string] attributes) 
+        {
+            string code = "<` ~ tag ~ `";
+            foreach(key, val; attributes.byPair) 
+            {
+                if (val == "")
+                    code ~= " " ~ key;
+                else
+                {
+                    code ~= " " ~ key ~ "=" ~ val;
+                }
+            }
+            code ~= ">" ~ content ~ "</` ~ tag ~ `>";
+            return code;
+        }` ~ "\n";
     }
     return code;
 }
