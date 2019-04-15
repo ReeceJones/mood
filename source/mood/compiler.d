@@ -32,28 +32,28 @@ void output(T...)(T Args)
 }
 `;
 
-Document compile(Node[] nodes)()
+Document compile(Node[] __nodes)()
 {
-    Document doc;
-    doc.nodes ~= DocumentNode.init;
+    Document __doc;
+    __doc.nodes ~= DocumentNode.init;
     // mixin("int yikes = 69;");
-    static foreach(node; nodes)
+    static foreach(__node; __nodes)
     {
-        static if (shrink && node.nodeType == NodeType.Content && node.content.strip.length == 0)
+        static if (shrink && __node.nodeType == NodeType.Content && __node.content.strip.length == 0)
             continue;
-        static if (node.tagType == TagType.Code)
+        static if (__node.tagType == TagType.Code)
         {
             // pragma(msg, "(ref string outputStream){" ~ outputCodeStub ~ node.content ~ "\n}");
-            doc.nodes ~= DocumentNode(true, node.tagType == TagType.Comment, 
-                                        "(ref string outputStream){" ~ outputCodeStub ~ node.content ~ "\n}",
-                                        mixin("(ref string outputStream){" ~ outputCodeStub ~ node.content ~ "\n}"));
-            doc.nodes ~= DocumentNode.init;
+            __doc.nodes ~= DocumentNode(true, __node.tagType == TagType.Comment, 
+                                        "(ref string outputStream){" ~ outputCodeStub ~ __node.content ~ "\n}",
+                                        mixin("(ref string outputStream){" ~ outputCodeStub ~ __node.content ~ "\n}"));
+            __doc.nodes ~= DocumentNode.init;
         }
-        static if (node.tagType != TagType.Code)
-            doc.nodes[$-1].content ~= node.original;
+        static if (__node.tagType != TagType.Code)
+            __doc.nodes[$-1].content ~= __node.original;
     }
 
-    return doc;
+    return __doc;
 }
 
 Document compile(string file)()

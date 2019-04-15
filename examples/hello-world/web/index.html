@@ -8,12 +8,18 @@
         <div class="section">
             <div class="container">
                 <article class="content">
-                    <h1><?D output("hello from mood!"); /?></h1>
+                    <p class="title"><?D output("hello from mood!"); /?></p>
+                    <p class="subtitle">
+                        <?D
+                            import core.cpuid;
+                            output("Host CPU: ", processor());
+                        /?>
+                    </p>
                     <ul>
                         <?D
                             import std.conv: text;
                             for (int i = 0; i < 10; i++)
-                                output("<li>" ~ i.text ~ "</li>");
+                                output("<li>", i, "</li>");
                         /?>
                     </ul>
                 </article>
