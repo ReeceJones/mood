@@ -83,6 +83,9 @@ Templates also have a second parameter, `attributes`, wich are inserted into the
 ```D
 output("Hello World".h1); // <h1>Hello World</h1>
 output("Hello World".h1(`class="title"`)); // <h1 class="title">Hello World</h1>
+output("Hello World".h1([
+    `class`: `"title"`
+])); // <h1 class="title">Hello World</h1>
 ```
 ## Contributing
 If you have a suggestion, bug fix, or want a feature added, submit a PR, or an issue. Feedback is appreciated :)
