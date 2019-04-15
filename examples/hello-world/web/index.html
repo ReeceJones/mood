@@ -1,5 +1,9 @@
 <!DOCTYPE html>
 <html>
+    <?D
+        import std.conv: text;
+        import core.cpuid;
+    /?>
     <head>
         <title>MOOD Example</title>
         <link href="https://reece.ooo/bulma.css" rel="stylesheet"/>
@@ -11,13 +15,11 @@
                     <p class="title"><?D output("hello from mood!"); /?></p>
                     <p class="subtitle">
                         <?D
-                            import core.cpuid;
                             output("Host CPU: ", processor());
                         /?>
                     </p>
                     <ul>
                         <?D
-                            import std.conv: text;
                             for (int i = 0; i < 10; i++)
                                 output("<li>", i, "</li>");
                         /?>
