@@ -9,6 +9,6 @@ import mood.server;
 {
     static Document doc = compile!(file);
     return cast(HTTPServerRequestDelegateS)(scope HTTPServerRequest req, scope HTTPServerResponse res) {
-        res.writeBody(doc.serve, "text/html; charset=utf-8");
+        res.writeBody(doc.serve(req, res), "text/html; charset=utf-8");
     };
 }

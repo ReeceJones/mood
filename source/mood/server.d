@@ -2,14 +2,16 @@ module mood.server;
 
 import mood.compiler;
 import std.stdio;
+import vibe.http.server: HTTPServerResponse, HTTPServerRequest, HTTPServerRequestDelegateS;
 
 
 
-string serve(Document doc)
+
+string serve(Document doc, HTTPServerRequest req, HTTPServerResponse res)
 {
     string output;
     string[] programOutput;
-    doc.fn(programOutput);
+    doc.fn(programOutput, req, res);
     writeln(programOutput);
     foreach(dn; doc.nodes)
     {
