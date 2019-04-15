@@ -1,0 +1,19 @@
+{
+	"authors": [
+		"Reece Jones"
+	],
+	"copyright": "Copyright © 2019, Reece Jones",
+	"dependencies": {
+		"vibe-d": "~>0.8.5",
+		"mood": {
+			"path": "../../",
+			"version": "~master"
+		}
+	},
+	"targetType": "executable",
+	"versions": ["VibeDefaultMain"],
+	"description": "A minimal D application.",
+	"license": "proprietary",
+	"name": "hello-world",
+	"stringImportPaths": ["web"]
+}

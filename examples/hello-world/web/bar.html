@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MOOD Example</title>
+        <link href="https://reece.ooo/bulma.css" rel="stylesheet"/>
+    </head>
+    <body>
+        <div class="section">
+            <div class="container">
+                <article class="content">
+                    <h1><?D output("hello from mood!"); /?></h1>
+                    <ul>
+                        <?D
+                            import std.conv: text;
+                            for (int i = 0; i < 10; i++)
+                                output("<li>" ~ i.text ~ "</li>");
+                        /?>
+                    </ul>
+                </article>
+            </div>
+        </div>
+    </body>
+</html>

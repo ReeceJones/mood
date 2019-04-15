@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <!-- <?D
+        import std.stdio;
+        
+        writeln("hello world from test.html");
+
+        void foo(int i)
+        {
+            writeln(i); // outputs to stdout on the server side
+        }
+
+        writeln("Evil man/"); // outputs to server stdout
+
+        for (int i = 0; i < 5; i++)
+        {
+            if (i <= 2)
+                foo(i); // ouputs to server stdout
+        }
+
+        output("this shouldn't be displayed, but the code will still run");
+    /?> -->
+    <div class="section" autoplay val=50>
+        <div class="container has-text-centered">
+            <strong><?D output("Hello World from DHP"); /?></strong>
+            <p class="content">Insert lorem ipsum here!</p>
+        </div>
+    </div>
+</html>

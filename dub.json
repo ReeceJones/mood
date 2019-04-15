@@ -1,0 +1,14 @@
+{
+	"authors": [
+		"Reece Jones"
+	],
+	"dependencies": {
+		"vibe-d:http": "~>0.8.5"
+	},
+	"copyright": "Copyright © 2019, Reece Jones",
+	"description": "PHP-like web framework for vibe.d.",
+	"license": "proprietary",
+	"name": "mood",
+	"targetType": "library",
+	"stringImportPaths": ["web"]
+}
