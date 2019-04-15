@@ -72,5 +72,17 @@ Includes in mood are similar to templates in diet.
 + You can nest includes.
 + You can use D code within includes.
 + You can put includes in folders.
+## Templates
+mood also comes with templates which make generate html tags easier. All but three (template, main, object) html tags are supported.
+To use templates, import `mood.templates` in your html file, and run the function that corresponds to the tag.
+You can use a template like:
+```D
+output("Hello World".h1);
+```
+Templates also have a second parameter, `attributes`, wich are inserted into the opening tag after the tag name and a space.
+```D
+output("Hello World".h1); // <h1>Hello World</h1>
+output("Hello World".h1(`class="title"`)); // <h1 class="title">Hello World</h1>
+```
 ## Contributing
 If you have a suggestion, bug fix, or want a feature added, submit a PR, or an issue. Feedback is appreciated :)
