@@ -7,6 +7,7 @@ import std.conv;
 import mood.node;
 import mood.parser;
 
+// works, but do not trust
 immutable bool shrink = false;
 
 struct DocumentNode
@@ -52,19 +53,24 @@ Document compile(Node[] __nodes)()
     static foreach(__node; __nodes)
     {
         static if (shrink && __node.nodeType == NodeType.Content && __node.content.strip.length == 0)
-            continue;
-        static if (__node.tagType == TagType.Code)
         {
-            __doc.codeSections++;
-            // pragma(msg, "(ref string outputStream){" ~ outputCodeStub ~ node.content ~ "\n}");
-            __doc.nodes ~= DocumentNode(true, __node.tagType == TagType.Comment, 
-                                        "(ref string outputStream){" ~ __node.content ~ "\n}");
-            // code ~= __node.content ~ "\n";
-                                        // mixin("(ref string outputStream){" ~ outputCodeStub ~ __node.content ~ "\n}"));
-            __doc.nodes ~= DocumentNode.init;
+
         }
-        static if (__node.tagType != TagType.Code)
-            __doc.nodes[$-1].content ~= __node.original;
+        else
+        {
+            static if (__node.tagType == TagType.Code)
+            {
+                __doc.codeSections++;
+                // pragma(msg, "(ref string outputStream){" ~ outputCodeStub ~ node.content ~ "\n}");
+                __doc.nodes ~= DocumentNode(true, __node.tagType == TagType.Comment, 
+                                            "(ref string outputStream){" ~ __node.content ~ "\n}");
+                // code ~= __node.content ~ "\n";
+                                            // mixin("(ref string outputStream){" ~ outputCodeStub ~ __node.content ~ "\n}"));
+                __doc.nodes ~= DocumentNode.init;
+            }
+            static if (__node.tagType != TagType.Code)
+                __doc.nodes[$-1].content ~= __node.original;
+        }
     }
     // code ~= "}";
     __doc.fn = mixin(createProgram!__nodes);
