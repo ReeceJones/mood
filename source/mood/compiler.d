@@ -46,6 +46,30 @@ string createProgram(Node[] nodes)()
     return code;
 }
 
+private Node[] importAndParse(string file)()
+{
+    enum tokens = tokenizeDHTML(import(file));
+    enum nodes = parseDHTML(tokens);
+    return nodes;
+}
+
+Node[] link(Node[] nodes)()
+{
+    Node[] result;
+    static foreach(node; nodes)
+    {
+        static if (node.tagType == TagType.Tag && node.content.length >= 9 && node.content[0..8] == "include:")
+        {
+            result ~= link!(importAndParse!(node.content[8..$-1])());
+        }
+        else
+        {
+            result ~= node;
+        }
+    }
+    return result;
+}
+
 Document compile(Node[] __nodes)()
 {
     Document __doc;
@@ -69,7 +93,7 @@ Document compile(Node[] __nodes)()
                                             // mixin("(ref string outputStream){" ~ outputCodeStub ~ __node.content ~ "\n}"));
                 __doc.nodes ~= DocumentNode.init;
             }
-            static if (__node.tagType != TagType.Code)
+            else
                 __doc.nodes[$-1].content ~= __node.original;
         }
     }
@@ -83,5 +107,10 @@ Document compile(string file)()
     pragma(msg, "Compiling " ~ file ~ "...");
 	enum tokens = tokenizeDHTML(import(file));
     enum nodes = parseDHTML(tokens);
-    return compile!(nodes);
+    enum linkedNodes = link!(nodes)();
+    // static foreach(node; nodes)
+    // {
+    //     pragma(msg, node.content);
+    // }
+    return compile!(linkedNodes);
 }

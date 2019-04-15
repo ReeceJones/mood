@@ -9,6 +9,5 @@
 	"description": "PHP-like web framework for vibe.d.",
 	"license": "proprietary",
 	"name": "mood",
-	"targetType": "library",
-	"stringImportPaths": ["web"]
+	"targetType": "library"
 }

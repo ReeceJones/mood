@@ -1,0 +1,27 @@
+<section class="section">
+    <div class"container">
+        <div class="has-text-centered">
+            <p class="content">
+                Hello from <strong>Foo.html</strong>
+            </p>
+            <p class="content">
+                <?D
+                    for (int i = 1; i <= 50; i++)
+                    {
+                        output(i);
+                    }
+                /?>
+            </p>
+            <p class="content">The above string is D code! So is the code below!</p>
+            <include:Bar.html/>
+            <p class="content">
+                <?D
+                    for (int i = 100; i > 50; i--)
+                    {
+                        output(i);
+                    }
+                /?>
+            </p>
+        </div>
+    </div>
+</section>
