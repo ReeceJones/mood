@@ -47,7 +47,6 @@ To use templates, import `mood.templates` in your html file, and run the functio
 You can use a template like:
 ```D
 output("Hello World".h1);
-```D
 output("Hello World".h1); // <h1>Hello World</h1>
 output("Hello World".h1(`class="title"`)); // <h1 class="title">Hello World</h1>
 output("Hello World".h1([
