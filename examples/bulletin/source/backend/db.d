@@ -10,4 +10,9 @@ shared static this()
 {
     client = connectMongoDB("127.0.0.1");
     bulletin = client.getCollection("mood.bulletin");
+    /*
+        > mongo
+        > use mood
+        > db.createCollection("bulletin");
+    */
 }
