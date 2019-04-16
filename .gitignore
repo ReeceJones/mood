@@ -1,3 +1,5 @@
 libmood.a
 dub.selections.json
 .dub
+.DS_Store
+mood-test-library
