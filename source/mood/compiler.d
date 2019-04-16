@@ -12,6 +12,11 @@ import vibe.http.server: HTTPServerRequest, HTTPServerResponse;
 // works, but do not trust
 immutable bool shrink = false;
 
+/**
+ * Struct that represents a single node in a document. 
+ *   
+ * DocumentNode is used to compress the number of overall nodes that have to be processed on page load. Currently the comment field is unused, though it may be used in the future.
+*/
 struct DocumentNode
 {
     bool code = false;      /// True if the section is a code section. Used in the server to determine output ordering.
@@ -19,6 +24,11 @@ struct DocumentNode
     string content = "";    /// The string content of the section.
 }
 
+/**
+ * A struct that represents a compiled webpage
+ *
+ * Returned by compile, and contains an entrypoint function to run all of the code that is on the webpage. Currently codeSections is unused, but in the future will be used for error checking.
+*/
 struct Document
 {
     DocumentNode[] nodes = [];                                                                          /// The individual document nodes that make a page.
@@ -26,6 +36,7 @@ struct Document
     void function(ref string[] outputStream, HTTPServerRequest req, HTTPServerResponse res) entrypoint; /// Entrypoint function for the page. Called on page load.
 }
 
+/// A block of code that is inserted into the beginning of every webpage program so that it can have output functionality.
 immutable string outputCodeStub = `import _stub = std.conv: text;
 void output(T...)(T Args)
 {
@@ -36,6 +47,15 @@ void output(T...)(T Args)
 }
 `;
 
+/**
+ * Creates the program source for a webpage.
+ *
+ * Creates the source code for a webpage by taking in all the nodes of the webpage and determining if its a code section or not.
+ *
+ * Params:
+ *  nodes = The nodes of the webpage.
+ * Returns: Source code of the program that is mixin'd
+*/
 string createProgram(Node[] nodes)()
 {
     string code = "(ref string[] outputStream, HTTPServerRequest req, HTTPServerResponse res){ outputStream = [\"\"];\n" ~ outputCodeStub;
@@ -46,6 +66,11 @@ string createProgram(Node[] nodes)()
     return code;
 }
 
+/**
+ * Params:
+ *  file = The file to import and parse
+ * Returns: Parsed file
+*/
 private Node[] importAndParse(string file)()
 {
     enum tokens = tokenizeDHTML(import(file));
@@ -53,6 +78,16 @@ private Node[] importAndParse(string file)()
     return nodes;
 }
 
+/**
+ * Resolve any includes that are in a parsed file.
+ *
+ * iterates over all of the parsed nodes and if there is a node that is an include tag i.e. <include:file.html/>, then it will load the file, and try and insert it into the webpage.
+ * Note: This will fail if two or more includes rely on each other. If you get an error along the lines of too many levels of CTFE recursion, then you may have one file that includes itself.
+ * 
+ * Params:
+ *  nodes = The nodes of the current webpage that are to be parsed over.
+ * Returns: The resulting webpage with all includes inserted into it.
+*/
 Node[] link(Node[] nodes)()
 {
     Node[] result;
@@ -66,6 +101,15 @@ Node[] link(Node[] nodes)()
     return result;
 }
 
+/**
+ * Compiles a set of nodes into a Document.
+ *
+ * Takes a set of parsed, and linked nodes, then turns it into an optimized webpage by creating the entrypoint function, of the app, and shortening the normal html content into as few nodes as possible.
+ *
+ * Params:
+ *  __nodes = The webpage nodes.
+ * Returns: Compiled Document that represents the webpage.
+*/
 Document compile(Node[] __nodes)()
 {
     Document __doc; // resulting document
@@ -95,6 +139,15 @@ Document compile(Node[] __nodes)()
     return __doc;
 }
 
+/**
+ * Compiles a file into a Document.
+ *
+ * Takes a file that contains all the code for the webpage, then turns it into an optimized webpage by creating the entrypoint function, of the app, and shortening the normal html content into as few nodes as possible.
+ *
+ * Params:
+ *  file = The file to laod.
+ * Returns: Compiled Document that represents the webpage.
+*/
 Document compile(string file)()
 {
     pragma(msg, "Compiling " ~ file ~ "...");

@@ -2,6 +2,15 @@ module mood.templates;
 
 import std.array: byPair;
 
+/**
+ * Generate templates.
+ *
+ * Used to generate more than a hundred templates used to more easily generate html in webpages.
+ *
+ * Params:
+ *  tags = Array of tags that will be used to generate templates.
+ * Returns: Source code of all of the generated templates that will be mixin'd.
+*/
 private string generateTemplates(string[] tags)()
 {
     string code;

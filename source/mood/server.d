@@ -4,9 +4,17 @@ import mood.compiler;
 import std.stdio;
 import vibe.http.server: HTTPServerResponse, HTTPServerRequest, HTTPServerRequestDelegateS;
 
-
-
-
+/**
+ * Serve a Document.
+ *
+ * Called when a webpage is requested. When called, this executes the program first, before rendering out the page. After program executing the page is reconstructed using the output of the program execution.
+ *
+ * Params:
+ *  doc = The Document to serve.
+ *  req = vibe.d HTTPServerRequest that contains information about the requested page.
+ *  res = vibe.d HTTPServerResponse that contains information about the resulting page.
+ * Returns: String representation of the reconstructed webpage.
+*/
 string serve(Document doc, HTTPServerRequest req, HTTPServerResponse res)
 {
     // resulting webpage in string representation

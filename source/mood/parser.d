@@ -4,21 +4,15 @@ import std.stdio;
 import std.string;
 import mood.node;
 
-
-int countOccurances(string s, string match, string exclude)
-{
-    int count;
-    foreach(i, c; match)
-    {
-        foreach(z; s)
-        {
-            if (c == z && (i == 0 || match[i-1..i+1] != exclude))
-                count++;
-        }
-    }
-    return count;
-}
-
+/**
+ * Takes raw html data and tokenizes it.
+ *
+ * Does not completely parse the html, but is used to make parsing much easier, and to seperate it into different parts.
+ *
+ * Params:
+ *  dhtml = The html that is to be tokenized.
+ * Returns: Tokenized html in the form of a string array.
+*/
 string[] tokenizeDHTML(string dhtml)
 {
     string[] tokens = [""];
@@ -30,9 +24,6 @@ string[] tokenizeDHTML(string dhtml)
         {
             if (inCode)
             {
-                // check to make sure we are not parsing the D-code
-                int strDelimiters = countOccurances(tokens[$-1], "\"`'", `\"`);
-
                 if (i >= 2 && i + 1 <= dhtml.length && dhtml[i-2..i+1] == "/?>" && codeType == "D")
                 {
                     tokens[$-1] ~= c;
@@ -41,6 +32,13 @@ string[] tokenizeDHTML(string dhtml)
                     codeType = "";
                 }
                 else if (i >= 8 && i + 1 <= dhtml.length && dhtml[i-8..i+1] == "</script>" && codeType == "script")
+                {
+                    tokens[$-1] ~= c;
+                    tokens ~= "";
+                    inCode = false;
+                    codeType = "";
+                }
+                else if (i >= 7 && i + 1 <= dhtml.length && dhtml[i-7..i+1] == "</style>" && codeType == "style")
                 {
                     tokens[$-1] ~= c;
                     tokens ~= "";
@@ -68,6 +66,11 @@ string[] tokenizeDHTML(string dhtml)
                 inCode = true;
                 codeType = "script";
             }
+            if (i + 7 <= dhtml.length && dhtml[i..i+7] == "<style>" && codeType == "")
+            {
+                inCode = true;
+                codeType = "style";
+            }
             
             tokens ~= ("" ~ c);
         }
@@ -77,6 +80,15 @@ string[] tokenizeDHTML(string dhtml)
     return tokens;
 }
 
+/**
+ * Parses tokenized html data.
+ *
+ * Takes in tokenized html data and outputs a set of nodes that contain information about itself.
+ *
+ * Params:
+ *  tokens = The tokens that are output from tokenizing the html data.
+ * Returns: Parsed html nodes.
+*/
 Node[] parseDHTML(string[] tokens)
 {
     Node[] nodes;
@@ -142,15 +154,12 @@ Node[] parseDHTML(string[] tokens)
                     workingTag = workingTag.stripLeft;
                     if (workingTag.length == 0)
                         break;
-                    //parse netx attribute
+                    //parse next attribute
                     Attribute attr;
                     long idx1 = workingTag.indexOf(" ");
                     long idx2 = workingTag.indexOf("=");
                     long idx3 = workingTag.indexOf("\"");
-                    // writeln(workingTag);
-                    // writeln("idx1:\t", idx1,"\tidx2:\t", idx2,"\tidx3:\t", idx3);
-                    // parameter value
-                    // if (idx1 < idx2 && idx1 != -1)
+
                     if (idx1 <= idx2 && idx2 + 1 != idx3)
                     {
                         idx1 = idx1 == -1 ? workingTag.length : idx1;
