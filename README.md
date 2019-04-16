@@ -1,16 +1,21 @@
 # mood
 ## Introduction
 After spending some time with the vanilla vibe.d framework, I started to get a bit tired and annoyed at using the diet files for each web page.
-### Why did I find it annoying?
-Well, take for example my website. The steps to display the content on a blog page were:
-1. Make a function to query the database.
-2. Make a router function.
-3. Pass database query to `res.render`
-4. `router.get("<path>", &routerFunction);`
-5. Make a diet file, then use the limited D functionality in diet to render out the code the way I wanted.
+### Why can diet be annoying?
+Don't get me wrong, I like diet, and think that it's a very elegant solution for generating dynamic web pages, but there are some things that irk me.
 
-The last step was the most annoying: diet had limited D functionality.
-If I wanted anything more complex than an if or a for loop in my diet file, I was out of luck, and would need to implement even more code on the backend which would result in a massive amount of spaghetti code.
+The first thing that really annoys me is just how much overhead I have to write on the server side to setup all of the diet templates correctly. This is because I can't directly include blocks of code right into diet. Well, I can, but it looks awful, and diet even says that it's not meant for more complex logic. So, if I wanted to say, implement an authentification system on top of the vanilla diet/vibe.d combo, and I want to check for authentification on every page, I have to either check for authentification in every single router function, or make my own new "render" function that automatically does it, then use that function for everything else instead of res.render, and the result becomes just a bunch of spaghetti code with routers laying all over the place. The result is a project that becomes increasingly difficult to manage as it grows since so many different minute factors lead to weird design choices.
+
+The second thing that frustrated me was that most of the code had to be done in router functions. This goes hand in hand with the previous complaint, but it really upset me when I had to create a completely new router function for one page that was similar to other router functions, but had one slight change in code, so I had to add a new router function.
+
+The third thing that upset me was the syntax. diet is nice, but its also largely undocumented, and can lead to some frustrating errors.
+
+### My solution
+My Solution to the problems listed above was to:
+1. Make a PHP-like addition on top of vibe.d so that instead of using diet templates, I can have sub-modules in that contain helper functions.
+2. Split the logic between the page and the backend.
+3. Use a more html-like syntax.
+
 ### What is mood
 Well, mood builds on top of the core functionality of vibe.d. Instead of being a new framework outright, mood replaces the need for diet templates in vibe.d mood uses html files with D code baked in, similarly to how PHP is baked into .php files. 
 
