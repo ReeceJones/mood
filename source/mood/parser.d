@@ -4,6 +4,7 @@ import std.stdio;
 import std.string;
 import mood.node;
 
+
 int countOccurances(string s, string match, string exclude)
 {
     int count;
@@ -22,6 +23,7 @@ string[] tokenizeDHTML(string dhtml)
 {
     string[] tokens = [""];
     bool inCode = false;
+    string codeType = "";
     foreach(i, c; dhtml)
     {
         if (c == '>')
@@ -29,13 +31,21 @@ string[] tokenizeDHTML(string dhtml)
             if (inCode)
             {
                 // check to make sure we are not parsing the D-code
-                // int strDelimiters = countOccurances(tokens[$-1], "\"`'", `\"`);
+                int strDelimiters = countOccurances(tokens[$-1], "\"`'", `\"`);
 
-                if (dhtml[i-2..i+1] == "/?>")// && strDelimiters % 2 == 0)
+                if (i >= 2 && i + 1 <= dhtml.length && dhtml[i-2..i+1] == "/?>" && codeType == "D")
                 {
                     tokens[$-1] ~= c;
                     tokens ~= "";
                     inCode = false;
+                    codeType = "";
+                }
+                else if (i >= 8 && i + 1 <= dhtml.length && dhtml[i-8..i+1] == "</script>" && codeType == "script")
+                {
+                    tokens[$-1] ~= c;
+                    tokens ~= "";
+                    inCode = false;
+                    codeType = "";
                 }
                 else
                     tokens[$-1] ~= c;
@@ -46,11 +56,17 @@ string[] tokenizeDHTML(string dhtml)
                 tokens ~= "";
             }
         }
-        else if (c == '<' && tokens.length > 1 && !inCode)
+        else if (c == '<' && tokens.length >= 0 && !inCode)
         {
-            if (dhtml[i..i+3] == "<?D")
+            if (i + 3 <= dhtml.length && dhtml[i..i+3] == "<?D" && codeType == "")
             {
                 inCode = true;
+                codeType = "D";
+            }
+            if (i + 8 <= dhtml.length && dhtml[i..i+8] == "<script>" && codeType == "")
+            {
+                inCode = true;
+                codeType = "script";
             }
             
             tokens ~= ("" ~ c);

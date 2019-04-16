@@ -14,16 +14,16 @@ immutable bool shrink = false;
 
 struct DocumentNode
 {
-    bool code = false;
-    bool comment;
-    string content = "";
+    bool code = false;      /// True if the section is a code section. Used in the server to determine output ordering.
+    bool comment = false;   /// True if the section is a comment. Reserved for potential future use.
+    string content = "";    /// The string content of the section.
 }
 
 struct Document
 {
-    DocumentNode[] nodes = [];
-    uint codeSections = 0;
-    void function(ref string[] outputStream, HTTPServerRequest req, HTTPServerResponse res) fn;
+    DocumentNode[] nodes = [];                                                                          /// The individual document nodes that make a page.
+    uint codeSections = 0;                                                                              /// The number of code sections
+    void function(ref string[] outputStream, HTTPServerRequest req, HTTPServerResponse res) entrypoint; /// Entrypoint function for the page. Called on page load.
 }
 
 immutable string outputCodeStub = `import _stub = std.conv: text;
@@ -42,7 +42,7 @@ string createProgram(Node[] nodes)()
     foreach(node; nodes)
         if (node.tagType == TagType.Code)
             code ~= node.content ~ "\n outputStream ~= \"\";\n";
-    code ~= "}";
+    code ~= "\n}";
     return code;
 }
 
@@ -59,58 +59,51 @@ Node[] link(Node[] nodes)()
     static foreach(node; nodes)
     {
         static if (node.tagType == TagType.Tag && node.content.length >= 9 && node.content[0..8] == "include:")
-        {
             result ~= link!(importAndParse!(node.content[8..$-1])());
-        }
         else
-        {
             result ~= node;
-        }
     }
     return result;
 }
 
 Document compile(Node[] __nodes)()
 {
-    Document __doc;
-    __doc.nodes ~= DocumentNode.init;
-    // string code = "(ref string outputStream){";
+    Document __doc; // resulting document
+    __doc.nodes ~= DocumentNode.init; // start off with a blank document node
     static foreach(__node; __nodes)
     {
-        static if (shrink && __node.nodeType == NodeType.Content && __node.content.strip.length == 0)
-        {
-
-        }
+        // continue not work well in static foreach
+        static if (shrink && __node.nodeType == NodeType.Content && __node.content.strip.length == 0) {}
         else
         {
+            // add a new section if we hit a code section
             static if (__node.tagType == TagType.Code)
             {
                 __doc.codeSections++;
-                // pragma(msg, "(ref string outputStream){" ~ outputCodeStub ~ node.content ~ "\n}");
-                __doc.nodes ~= DocumentNode(true, __node.tagType == TagType.Comment, 
-                                            "(ref string outputStream, HTTPServerRequest req, HTTPServerResponse res){" ~ __node.content ~ "\n}");
-                // code ~= __node.content ~ "\n";
-                                            // mixin("(ref string outputStream){" ~ outputCodeStub ~ __node.content ~ "\n}"));
+                __doc.nodes ~= DocumentNode(true, false, __node.content);
                 __doc.nodes ~= DocumentNode.init;
             }
             else
-                __doc.nodes[$-1].content ~= __node.original;
+                __doc.nodes[$-1].content ~= __node.original; // otherwise add the string contents
         }
     }
-    // code ~= "}";
-    __doc.fn = mixin(createProgram!__nodes);
+
+    // create the page's program
+    enum prog = createProgram!__nodes;
+    // pragma(msg, prog);
+    __doc.entrypoint = mixin(prog);
     return __doc;
 }
 
 Document compile(string file)()
 {
     pragma(msg, "Compiling " ~ file ~ "...");
+    // parse the HTML document into something the parser can read
 	enum tokens = tokenizeDHTML(import(file));
+    // parse the tokens into nodes that the compile can read
     enum nodes = parseDHTML(tokens);
+    // resolve includes
     enum linkedNodes = link!(nodes)();
-    // static foreach(node; nodes)
-    // {
-    //     pragma(msg, node.content);
-    // }
+    // compile into optimized document
     return compile!(linkedNodes);
 }

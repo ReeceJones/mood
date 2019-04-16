@@ -9,15 +9,18 @@ import vibe.http.server: HTTPServerResponse, HTTPServerRequest, HTTPServerReques
 
 string serve(Document doc, HTTPServerRequest req, HTTPServerResponse res)
 {
+    // resulting webpage in string representation
     string output;
+    // array containing raw output data from entrypoint call
     string[] programOutput;
-    doc.fn(programOutput, req, res);
+    // call the page entrypoint
+    doc.entrypoint(programOutput, req, res);
     // writeln(programOutput);
     foreach(dn; doc.nodes)
     {
+        // if its a code section, collect output, and insert into webpage
         if (dn.code)
         {
-            // dn.fn(output);
             output ~= programOutput[0];
             programOutput = programOutput[1..$];
         }
