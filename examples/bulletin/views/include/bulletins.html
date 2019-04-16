@@ -1,0 +1,11 @@
+<?D
+    foreach(doc; bulletin.find())
+    {
+        output(`<section class="section"><div class="container">`);
+        output((cast(string)doc["name"]).h1(`class="title"`));
+        output("<br>");
+        output((cast(string)doc["message"]).p(`class="content"`));
+        output("<br>");
+        output(`</div></section>`);
+    }
+/?>

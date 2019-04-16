@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/bulletin
+bulletin.so
+bulletin.dylib
+bulletin.dll
+bulletin.a
+bulletin.lib
+bulletin-test-*
+*.exe
+*.o
+*.obj
+*.lst

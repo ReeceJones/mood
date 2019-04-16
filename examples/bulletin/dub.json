@@ -1,0 +1,17 @@
+{
+	"authors": [
+		"Reece Jones"
+	],
+	"copyright": "Copyright © 2019, Reece Jones",
+	"dependencies": {
+		"vibe-d": "~>0.8.5",
+		"mood": {
+			"path": "../../",
+			"version": "~master"
+		}
+	},
+	"description": "A minimal D application.",
+	"license": "proprietary",
+	"name": "bulletin",
+	"versions": ["VibeDefaultMain"]
+}
