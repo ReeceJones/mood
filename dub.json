@@ -7,7 +7,7 @@
 	},
 	"copyright": "Copyright © 2019, Reece Jones",
 	"description": "PHP-like web framework for vibe.d.",
-	"license": "proprietary",
+	"license": "public domain",
 	"name": "mood",
 	"targetType": "library"
 }
