@@ -4,6 +4,7 @@ import vibe.http.server: HTTPServerResponse, HTTPServerRequest, HTTPServerReques
 
 import mood.compiler;
 import mood.server;
+import mood.parser;
 
 /**
  * Render a mood file.
@@ -14,12 +15,28 @@ import mood.server;
  *  file = The file to serve.
  * Returns: HTTPServerRequestDelegateS
 */
-@property HTTPServerRequestDelegateS moodRender(string file)()
+@property HTTPServerRequestDelegateS moodRender(string file, params...)()
 {
     // compile our document
-    static doc = compile!(file);
+    // static doc = compile!(file, params);
+
+    pragma(msg, "Compiling " ~ file ~ "...");
+    // parse the HTML document into something the parser can read
+	enum tokens = tokenizeDHTML(import(file));
+    // parse the tokens into nodes that the compile can read
+    enum nodes = parseDHTML(tokens);
+    // resolve includes
+    enum linkedNodes = link!(nodes)();
+    // create our program
+    enum program = compileProgram!(linkedNodes, params);
+    // compile into optimized document
+    enum doc = compile!(linkedNodes, params);
+
+
     // serve our document
     return cast(HTTPServerRequestDelegateS)(scope HTTPServerRequest req, scope HTTPServerResponse res) {
-        res.writeBody(doc.serve(req, res), "text/html; charset=utf-8");
+        string[] output;
+        program(output, req, res, params);
+        res.writeBody(doc.serve(output), "text/html; charset=utf-8");
     };
 }

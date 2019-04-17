@@ -24,6 +24,8 @@ struct DocumentNode
     string content = "";    /// The string content of the section.
 }
 
+alias FnEntryPoint = void function(ref string[] outputStream, HTTPServerRequest req, HTTPServerResponse res, ...);
+
 /**
  * A struct that represents a compiled webpage
  *
@@ -33,7 +35,7 @@ struct Document
 {
     DocumentNode[] nodes = [];                                                                          /// The individual document nodes that make a page.
     uint codeSections = 0;                                                                              /// The number of code sections
-    void function(ref string[] outputStream, HTTPServerRequest req, HTTPServerResponse res) entrypoint; /// Entrypoint function for the page. Called on page load.
+    FnEntryPoint entrypoint; /// Entrypoint function for the page. Called on page load.
 }
 
 /// A block of code that is inserted into the beginning of every webpage program so that it can have output functionality.
@@ -47,6 +49,16 @@ void output(T...)(T Args)
 }
 `;
 
+string extendParameters(params...)()
+{
+    string code = "";
+    static foreach(i, p; params)
+    {
+        code ~= ", " ~ typeof(params[i]).stringof ~ " " ~ __traits(identifier, params[i]);
+    }
+    return code;
+}
+
 /**
  * Creates the program source for a webpage.
  *
@@ -56,9 +68,9 @@ void output(T...)(T Args)
  *  nodes = The nodes of the webpage.
  * Returns: Source code of the program that is mixin'd
 */
-string createProgram(Node[] nodes)()
+string createProgram(Node[] nodes, params...)()
 {
-    string code = "(ref string[] outputStream, HTTPServerRequest req, HTTPServerResponse res){ outputStream = [\"\"];\n" ~ outputCodeStub;
+    string code = "(ref string[] outputStream, HTTPServerRequest req, HTTPServerResponse res" ~ extendParameters!params ~ "){ outputStream = [\"\"];\n" ~ outputCodeStub;
     foreach(node; nodes)
         if (node.tagType == TagType.Code)
             code ~= node.content ~ "\n outputStream ~= \"\";\n";
@@ -94,7 +106,11 @@ Node[] link(Node[] nodes)()
     static foreach(node; nodes)
     {
         static if (node.tagType == TagType.Tag && node.content.length >= 9 && node.content[0..8] == "include:")
+        {
+            static if (node.content[$-1] != '/')
+                static assert(0, "Compilation error: Malformed include statement. Missing \"/\"?");
             result ~= link!(importAndParse!(node.content[8..$-1])());
+        }
         else
             result ~= node;
     }
@@ -110,7 +126,7 @@ Node[] link(Node[] nodes)()
  *  __nodes = The webpage nodes.
  * Returns: Compiled Document that represents the webpage.
 */
-Document compile(Node[] __nodes)()
+Document compile(Node[] __nodes, __params...)()
 {
     Document __doc; // resulting document
     __doc.nodes ~= DocumentNode.init; // start off with a blank document node
@@ -133,10 +149,15 @@ Document compile(Node[] __nodes)()
     }
 
     // create the page's program
-    enum prog = createProgram!__nodes;
+    // enum prog = createProgram!(__nodes, __params);
     // pragma(msg, prog);
-    __doc.entrypoint = mixin(prog);
+    // __doc.entrypoint = mixin(prog);
     return __doc;
+}
+
+auto compileProgram(Node[] __nodes, __params...)()
+{
+    return mixin(createProgram!(__nodes, __params));
 }
 
 /**
@@ -148,7 +169,7 @@ Document compile(Node[] __nodes)()
  *  file = The file to laod.
  * Returns: Compiled Document that represents the webpage.
 */
-Document compile(string file)()
+Document compile(string file, params...)()
 {
     pragma(msg, "Compiling " ~ file ~ "...");
     // parse the HTML document into something the parser can read
@@ -157,6 +178,8 @@ Document compile(string file)()
     enum nodes = parseDHTML(tokens);
     // resolve includes
     enum linkedNodes = link!(nodes)();
+    // create our program
+    enum program = compileProgram!(linkedNodes, params);
     // compile into optimized document
-    return compile!(linkedNodes);
+    return compile!(linkedNodes, params);
 }

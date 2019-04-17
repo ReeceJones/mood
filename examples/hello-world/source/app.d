@@ -5,8 +5,10 @@ import mood.vibe;
 
 shared static this()
 {
+	int foo = 1337;
+
 	auto router = new URLRouter;
-	router.get("/", moodRender!"index.html");
+	router.get("/", moodRender!("index.html", foo));
 	router.get("/foo", moodRender!"foo.html");
 	auto settings = new HTTPServerSettings;
 	settings.port = 9001;
