@@ -2,7 +2,7 @@
 ## What is mood
 mood builds on top of the core functionality of vibe.d. Instead of being a new framework, mood replaces the use of diet in favor of a more php-like system.
 ## Getting Started
-1. ![Get from dub](mood.dub.pm)
+1. ![Get from dub](https://mood.dub.pm)
 2. Create an html file and place whatever code you want into it.
 ```html
 <!DOCTYPE html>
