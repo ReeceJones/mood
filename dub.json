@@ -6,7 +6,7 @@
 		"vibe-d:http": "~>0.8.5"
 	},
 	"copyright": "Copyright © 2019, Reece Jones",
-	"description": "PHP-like web framework for vibe.d.",
+	"description": "PHP-like webpages with vibe.d.",
 	"license": "public domain",
 	"name": "mood",
 	"targetType": "library"
