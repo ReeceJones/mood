@@ -1,23 +1,21 @@
+<?D
+    import core.cpuid;
+/?>
 <!DOCTYPE html>
 <html>
-    <?D
-        import core.cpuid;
-    /?>
-    <script>
-        console.log("Hello from jabbascript");
-        // <?D This is not D-code /?>
-        console.log("Goodbye from jabbascript");
-    </script>
     <head>
         <title>MOOD Example</title>
-        <link href="https://reece.ooo/bulma.css" rel="stylesheet"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.css"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>
         <section class="hero is-primary is-medium">
             <div class="hero-body">
                 <div class="container">
+                    <p class="content">
                         <p class="title"><?D output("hello from mood!"); /?></p>
                         <p class="subtitle">Host CPU: <?D output(processor()); /?> </p>
+                    </p>
                 </div>
             </div>
         </section>
