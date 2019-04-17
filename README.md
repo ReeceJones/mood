@@ -1,6 +1,6 @@
 # mood
 ## What is mood
-Well, mood builds on top of the core functionality of vibe.d. Instead of being a new framework outright, mood replaces the need for diet templates in vibe.d mood uses html files with D code baked in, similarly to how PHP is baked into .php files. 
+mood builds on top of the core functionality of vibe.d. Instead of being a new framework, mood replaces the use of diet in favor of a more php-like system.
 ## Getting Started
 1. Create an html file and place whatever code you want into it.
 ```html
@@ -54,5 +54,8 @@ output("Hello World".h1([
 ])); // <h1 class="title">Hello World</h1>
 ```
 Note: template, main, and object tags are not supported.
+## Future Plans
++ Pass parameters similarly to how you would with diet.
++ Add ability to hook render function.
 ## Contributing
 If you have a suggestion, bug fix, or want a feature added, submit a PR, or an issue. Feedback is appreciated :)
