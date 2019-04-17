@@ -34,7 +34,6 @@ Includes in mood insert the contents of the include file into the parent file. T
 To use templates, import `mood.templates` in your html file, and run the function that corresponds to the tag.
 You can use a template like:
 ```D
-output("Hello World".h1);
 output("Hello World".h1); // <h1>Hello World</h1>
 output("Hello World".h1(`class="title"`)); // <h1 class="title">Hello World</h1>
 output("Hello World".h1([
