@@ -9,15 +9,15 @@ import mood.parser;
 
 import vibe.http.server: HTTPServerRequest, HTTPServerResponse;
 
-// works, but do not trust
-immutable bool shrink = false;
+// works, but do not trust. Look more into later.
+private immutable bool shrink = false;
 
 /**
  * Struct that represents a single node in a document. 
  *   
  * DocumentNode is used to compress the number of overall nodes that have to be processed on page load. Currently the comment field is unused, though it may be used in the future.
 */
-struct DocumentNode
+private struct DocumentNode
 {
     bool code = false;      /// True if the section is a code section. Used in the server to determine output ordering.
     bool comment = false;   /// True if the section is a comment. Reserved for potential future use.
@@ -30,7 +30,7 @@ struct DocumentNode
  *
  * Returned by compile, and contains an entrypoint function to run all of the code that is on the webpage. Currently codeSections is unused, but in the future will be used for error checking.
 */
-struct Document
+private struct Document
 {
     DocumentNode[] nodes = [];                                                                          /// The individual document nodes that make a page.
     uint codeSections = 0;                                                                              /// The number of code sections
@@ -167,7 +167,7 @@ string createProgram(Node[] nodes, params...)()
  * Params:
  *  __nodes = The nodes of the webpage itself
  * __params = the parameters that are passed to the webpage through the render function.
- * Returns: auto-matically deduced function that is ran on page load.
+ * Returns: automatically deduced function that is ran on page load.
 */
 auto compileProgram(Node[] __nodes, __params...)()
 {
