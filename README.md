@@ -44,8 +44,8 @@ Note: template, main, and object tags are not supported.
 ### Parameters
 Parameters (aka aliases) are supported just like they are in diet.
 ## Future Plans
-+ Add ability to hook render function (local).
 + More in-depth compilation error reporting. (Hopefully by-line+char error reporting).
 + Lots of unit testing
++ File caching
 ## Contributing
 If you have a suggestion, bug fix, or want a feature added, submit a PR, or an issue. Feedback is appreciated :)
