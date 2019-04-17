@@ -1,13 +1,7 @@
 <!DOCTYPE html>
 <html>
     <?D
-        import std.conv: text;
         import core.cpuid;
-        import mood.templates;
-        import std.stdio;
-
-
-        bool b = true;
     /?>
     <script>
         console.log("Hello from jabbascript");
@@ -19,7 +13,7 @@
         <link href="https://reece.ooo/bulma.css" rel="stylesheet"/>
     </head>
     <body>
-        <section class="hero is-info is-medium">
+        <section class="hero is-primary is-medium">
             <div class="hero-body">
                 <div class="container">
                         <p class="title"><?D output("hello from mood!"); /?></p>
@@ -28,23 +22,5 @@
             </div>
         </section>
         <include:includes/Foo.html/>
-        <section class="section">
-            <div class="container">
-                <article class="content">
-                    <strong>URI: <?D output(req.requestURI); /?></strong>
-                    <ul>
-                        <?D
-                            output(foo);
-                            for (int i = 0; i < 10; i++)
-                            {
-                                output("hello world".li([
-                                    `class`: `"has-text-danger"`
-                                ]));
-                            }
-                        /?>
-                    </ul>
-                </article>
-            </div>
-        </section>
     </body>
 </html>
