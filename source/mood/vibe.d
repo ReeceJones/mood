@@ -5,6 +5,7 @@ import vibe.http.server: HTTPServerResponse, HTTPServerRequest, HTTPServerReques
 import mood.compiler;
 import mood.server;
 import mood.parser;
+import mood.hook;
 
 /**
  * Render a mood file.
@@ -39,6 +40,7 @@ import mood.parser;
 
     // serve our document
     return cast(HTTPServerRequestDelegateS)(scope HTTPServerRequest req, scope HTTPServerResponse res) {
+        moodCallHooks(req, res);
         string[] output;
         program(output, req, res, params);
         res.writeBody(doc.serve(output), "text/html; charset=utf-8");
