@@ -30,7 +30,7 @@ private struct DocumentNode
  *
  * Returned by compile, and contains an entrypoint function to run all of the code that is on the webpage. Currently codeSections is unused, but in the future will be used for error checking.
 */
-private struct Document
+struct Document
 {
     DocumentNode[] nodes = [];                                                                          /// The individual document nodes that make a page.
     uint codeSections = 0;                                                                              /// The number of code sections
@@ -81,7 +81,7 @@ Node[] link(Node[] nodes)()
  * Takes a set of parsed, and linked nodes, then turns it into an optimized webpage by creating the entrypoint function, of the app, and shortening the normal html content into as few nodes as possible.
  *
  * Params:
- *  __nodes = The webpage nodes.
+ *  nodes = The webpage nodes.
  * Returns: Compiled Document that represents the webpage.
 */
 Document compile(Node[] nodes)()

@@ -3,7 +3,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>mood.compiler</title>
+    <title>mood.hook</title>
     <style type="text/css" media="screen">
       html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p,
       blockquote, pre, a, abbr, address, cite, code, del, dfn, em, figure,
@@ -494,7 +494,7 @@
   <body id="ddoc_main" class="ddoc dlang">
     <div class="content_wrapper">
       <article class="module">
-        <h1 class="module_name">mood.compiler</h1>
+        <h1 class="module_name">mood.hook</h1>
         <section id="module_content">
 <section class="section ddoc_module_members_section">
   <div class="ddoc_module_members">
@@ -502,7 +502,7 @@
   <li class="ddoc_member">
   <div class="ddoc_member_header">
   <div class="ddoc_header_anchor">
-  <a href="#Document" id="Document"><code class="code">Document</code></a>
+  <a href="#moodRegisterHook" id="moodRegisterHook"><code class="code">moodRegisterHook</code></a>
 </div>
 </div><div class="ddoc_decl">
   <section class="section">
@@ -511,7 +511,7 @@
       <div class="dlang">
         <p class="para">
           <code class="code">
-            <span class="ddoc_anchor" id="Document"></span>struct <code class="code">Document</code>;
+            <span class="ddoc_anchor" id="moodRegisterHook"></span>void <code class="code">moodRegisterHook</code>(MoodHookFn <code class="code">fn</code>);
 
           </code>
         </p>
@@ -523,128 +523,14 @@
   <section class="section ddoc_sections">
   <div class="ddoc_summary">
   <p class="para">
-    A struct that represents a compiled webpage
+    Register a hook.
 
   </p>
 </div>
 <div class="ddoc_description">
   <h4>Discussion</h4>
   <p class="para">
-    Returned by compile, and contains an entrypoint function to run all of the code that is on the webpage. Currently codeSections is unused, but in the future will be used for error checking.
-  </p>
-</div>
-
-</section>
-<ul class="ddoc_members">
-  <li class="ddoc_member">
-  <div class="ddoc_member_header">
-  <div class="ddoc_header_anchor">
-  <a href="#Document.nodes" id="Document.nodes"><code class="code">nodes</code></a>
-</div>
-</div><div class="ddoc_decl">
-  <section class="section">
-    <div class="declaration">
-      <h4>Declaration</h4>
-      <div class="dlang">
-        <p class="para">
-          <code class="code">
-            <span class="ddoc_anchor" id="Document.nodes"></span>DocumentNode[] <code class="code">nodes</code>;
-
-          </code>
-        </p>
-      </div>
-    </div>
-  </section>
-</div>
-<div class="ddoc_decl">
-  <section class="section ddoc_sections">
-  <div class="ddoc_summary">
-  <p class="para">
-    The individual document <code class="code">nodes</code> that make a page.
-  </p>
-</div>
-
-</section>
-
-</div>
-
-</li><li class="ddoc_member">
-  <div class="ddoc_member_header">
-  <div class="ddoc_header_anchor">
-  <a href="#Document.codeSections" id="Document.codeSections"><code class="code">codeSections</code></a>
-</div>
-</div><div class="ddoc_decl">
-  <section class="section">
-    <div class="declaration">
-      <h4>Declaration</h4>
-      <div class="dlang">
-        <p class="para">
-          <code class="code">
-            <span class="ddoc_anchor" id="Document.codeSections"></span>uint <code class="code">codeSections</code>;
-
-          </code>
-        </p>
-      </div>
-    </div>
-  </section>
-</div>
-<div class="ddoc_decl">
-  <section class="section ddoc_sections">
-  <div class="ddoc_summary">
-  <p class="para">
-    The number of code sections
-  </p>
-</div>
-
-</section>
-
-</div>
-
-</li>
-</ul>
-
-</div>
-
-</li><li class="ddoc_member">
-  <div class="ddoc_member_header">
-  <div class="ddoc_header_anchor">
-  <a href="#link" id="link"><code class="code">link</code></a>
-</div>
-</div><div class="ddoc_decl">
-  <section class="section">
-    <div class="declaration">
-      <h4>Declaration</h4>
-      <div class="dlang">
-        <p class="para">
-          <code class="code">
-            <span class="ddoc_anchor" id="link"></span>Node[] <code class="code">link</code>(Node[] nodes)();
-
-          </code>
-        </p>
-      </div>
-    </div>
-  </section>
-</div>
-<div class="ddoc_decl">
-  <section class="section ddoc_sections">
-  <div class="ddoc_summary">
-  <p class="para">
-    Resolve any includes that are in a parsed file.
-
-  </p>
-</div>
-<div class="ddoc_description">
-  <h4>Discussion</h4>
-  <p class="para">
-    iterates over all of the parsed nodes and if there is a node that is an include tag i.e. <include:file.html/>, then it will load the file, and try and insert it into the webpage.
-
-  </p>
-</div>
-<div class="ddoc_section">
-  <p class="para">
-    <span class="ddoc_section_h">Note:</span>
-This will fail if two or more includes rely on each other. If you get an error along the lines of too many levels of CTFE recursion, then you may have one file that includes itself.
-
+    Registers a hook that is called whenever a page is loaded.
 
   </p>
 </div>
@@ -655,13 +541,13 @@ This will fail if two or more includes rely on each other. If you get an error a
       <tr class="ddoc_param_row">
   <td scope="ddoc_param_id">
   <code class="code">
-    <em class="term">nodes</em>
+    <em class="term">MoodHookFn <code class="code">fn</code></em>
   </code>
 </td>
 <td>
   <div class="ddoc_param_desc">
     <p class="para">
-      The nodes of the current webpage that are to be parsed over.
+      The function that is going to be called on page load
     </p>
   </div>
 </td>
@@ -670,12 +556,6 @@ This will fail if two or more includes rely on each other. If you get an error a
     </tbody>
   </table>
 </div>
-<div class="ddoc_returns">
-  <h4>Return Value</h4>
-  <p class="para">
-    The resulting webpage with all includes inserted into it.
-  </p>
-</div>
 
 </section>
 
@@ -684,7 +564,7 @@ This will fail if two or more includes rely on each other. If you get an error a
 </li><li class="ddoc_member">
   <div class="ddoc_member_header">
   <div class="ddoc_header_anchor">
-  <a href="#compile" id="compile"><code class="code">compile</code></a>
+  <a href="#moodRegisterHook" id="moodRegisterHook"><code class="code">moodRegisterHook</code></a>
 </div>
 </div><div class="ddoc_decl">
   <section class="section">
@@ -693,7 +573,7 @@ This will fail if two or more includes rely on each other. If you get an error a
       <div class="dlang">
         <p class="para">
           <code class="code">
-            <span class="ddoc_anchor" id="compile"></span>Document <code class="code">compile</code>(Node[] nodes)();
+            <span class="ddoc_anchor" id="moodRegisterHook"></span>void <code class="code">moodRegisterHook</code>(MoodHookDg <code class="code">dg</code>);
 
           </code>
         </p>
@@ -705,15 +585,14 @@ This will fail if two or more includes rely on each other. If you get an error a
   <section class="section ddoc_sections">
   <div class="ddoc_summary">
   <p class="para">
-    Compiles a set of nodes into a Document.
+    Register a hook.
 
   </p>
 </div>
 <div class="ddoc_description">
   <h4>Discussion</h4>
   <p class="para">
-    Takes a set of parsed, and linked nodes, then turns it into an optimized webpage by creating the entrypoint function, of the app, and shortening the normal html content into as few nodes as possible.
-
+    Registers a hook that is called whenever a page is loaded.
 
   </p>
 </div>
@@ -724,13 +603,13 @@ This will fail if two or more includes rely on each other. If you get an error a
       <tr class="ddoc_param_row">
   <td scope="ddoc_param_id">
   <code class="code">
-    <em class="term">nodes</em>
+    <em class="term">MoodHookDg <code class="code">dg</code></em>
   </code>
 </td>
 <td>
   <div class="ddoc_param_desc">
     <p class="para">
-      The webpage nodes.
+      The delegate that is going to be called on page load
     </p>
   </div>
 </td>
@@ -739,12 +618,6 @@ This will fail if two or more includes rely on each other. If you get an error a
     </tbody>
   </table>
 </div>
-<div class="ddoc_returns">
-  <h4>Return Value</h4>
-  <p class="para">
-    Compiled Document that represents the webpage.
-  </p>
-</div>
 
 </section>
 
@@ -753,7 +626,7 @@ This will fail if two or more includes rely on each other. If you get an error a
 </li><li class="ddoc_member">
   <div class="ddoc_member_header">
   <div class="ddoc_header_anchor">
-  <a href="#outputCodeStub" id="outputCodeStub"><code class="code">outputCodeStub</code></a>
+  <a href="#moodCallHooks" id="moodCallHooks"><code class="code">moodCallHooks</code></a>
 </div>
 </div><div class="ddoc_decl">
   <section class="section">
@@ -762,7 +635,7 @@ This will fail if two or more includes rely on each other. If you get an error a
       <div class="dlang">
         <p class="para">
           <code class="code">
-            <span class="ddoc_anchor" id="outputCodeStub"></span>immutable string <code class="code">outputCodeStub</code>;
+            <span class="ddoc_anchor" id="moodCallHooks"></span>void <code class="code">moodCallHooks</code>(HTTPServerRequest <code class="code">req</code>, HTTPServerResponse <code class="code">res</code>);
 
           </code>
         </p>
@@ -774,47 +647,14 @@ This will fail if two or more includes rely on each other. If you get an error a
   <section class="section ddoc_sections">
   <div class="ddoc_summary">
   <p class="para">
-    A block of code that is inserted into the beginning of every webpage program so that it can have output functionality.
-  </p>
-</div>
-
-</section>
-
-</div>
-
-</li><li class="ddoc_member">
-  <div class="ddoc_member_header">
-  <div class="ddoc_header_anchor">
-  <a href="#extendParameters" id="extendParameters"><code class="code">extendParameters</code></a>
-</div>
-</div><div class="ddoc_decl">
-  <section class="section">
-    <div class="declaration">
-      <h4>Declaration</h4>
-      <div class="dlang">
-        <p class="para">
-          <code class="code">
-            <span class="ddoc_anchor" id="extendParameters"></span>string <code class="code">extendParameters</code>(params...)();
-
-          </code>
-        </p>
-      </div>
-    </div>
-  </section>
-</div>
-<div class="ddoc_decl">
-  <section class="section ddoc_sections">
-  <div class="ddoc_summary">
-  <p class="para">
-    Converts template parameters to function parameters.
+    Calls all hooks.
 
   </p>
 </div>
 <div class="ddoc_description">
   <h4>Discussion</h4>
   <p class="para">
-    Used to convert template parameters into the function parameters that are passed to the executable function on page load.
-
+    Called whenever a page is loaded. There is no need to call this yourself.
 
   </p>
 </div>
@@ -825,151 +665,13 @@ This will fail if two or more includes rely on each other. If you get an error a
       <tr class="ddoc_param_row">
   <td scope="ddoc_param_id">
   <code class="code">
-    <em class="term">params</em>
+    <em class="term">HTTPServerRequest <code class="code">req</code></em>
   </code>
 </td>
 <td>
   <div class="ddoc_param_desc">
     <p class="para">
-      The params that are to be converted.
-    </p>
-  </div>
-</td>
-</tr>
-
-    </tbody>
-  </table>
-</div>
-<div class="ddoc_returns">
-  <h4>Return Value</h4>
-  <p class="para">
-    The resulting code from the conversion.
-  </p>
-</div>
-
-</section>
-
-</div>
-
-</li><li class="ddoc_member">
-  <div class="ddoc_member_header">
-  <div class="ddoc_header_anchor">
-  <a href="#createProgram" id="createProgram"><code class="code">createProgram</code></a>
-</div>
-</div><div class="ddoc_decl">
-  <section class="section">
-    <div class="declaration">
-      <h4>Declaration</h4>
-      <div class="dlang">
-        <p class="para">
-          <code class="code">
-            <span class="ddoc_anchor" id="createProgram"></span>string <code class="code">createProgram</code>(Node[] nodes, params...)();
-
-          </code>
-        </p>
-      </div>
-    </div>
-  </section>
-</div>
-<div class="ddoc_decl">
-  <section class="section ddoc_sections">
-  <div class="ddoc_summary">
-  <p class="para">
-    Creates the program source for a webpage.
-
-  </p>
-</div>
-<div class="ddoc_description">
-  <h4>Discussion</h4>
-  <p class="para">
-    Creates the source code for a webpage by taking in all the nodes of the webpage and determining if its a code section or not.
-
-
-  </p>
-</div>
-<div class="ddoc_params">
-  <h4>Parameters</h4>
-  <table cellspacing="0" cellpadding="5" border="0" class="graybox">
-    <tbody>
-      <tr class="ddoc_param_row">
-  <td scope="ddoc_param_id">
-  <code class="code">
-    <em class="term">nodes</em>
-  </code>
-</td>
-<td>
-  <div class="ddoc_param_desc">
-    <p class="para">
-      The nodes of the webpage.
-    </p>
-  </div>
-</td>
-</tr>
-
-    </tbody>
-  </table>
-</div>
-<div class="ddoc_returns">
-  <h4>Return Value</h4>
-  <p class="para">
-    Source code of the program that is mixin'd
-  </p>
-</div>
-
-</section>
-
-</div>
-
-</li><li class="ddoc_member">
-  <div class="ddoc_member_header">
-  <div class="ddoc_header_anchor">
-  <a href="#compileProgram" id="compileProgram"><code class="code">compileProgram</code></a>
-</div>
-</div><div class="ddoc_decl">
-  <section class="section">
-    <div class="declaration">
-      <h4>Declaration</h4>
-      <div class="dlang">
-        <p class="para">
-          <code class="code">
-            <span class="ddoc_anchor" id="compileProgram"></span>auto <code class="code">compileProgram</code>(Node[] __nodes, __params...)();
-
-          </code>
-        </p>
-      </div>
-    </div>
-  </section>
-</div>
-<div class="ddoc_decl">
-  <section class="section ddoc_sections">
-  <div class="ddoc_summary">
-  <p class="para">
-    Creates executable program for a webpage
-
-  </p>
-</div>
-<div class="ddoc_description">
-  <h4>Discussion</h4>
-  <p class="para">
-    Takes in a set of nodes and parameters and creates the executable function that is used to run code on a webpage
-
-
-  </p>
-</div>
-<div class="ddoc_params">
-  <h4>Parameters</h4>
-  <table cellspacing="0" cellpadding="5" border="0" class="graybox">
-    <tbody>
-      <tr class="ddoc_param_row">
-  <td scope="ddoc_param_id">
-  <code class="code">
-    <em class="term">__nodes</em>
-  </code>
-</td>
-<td>
-  <div class="ddoc_param_desc">
-    <p class="para">
-      The nodes of the webpage itself
+      The HTTPServerRequest
     </p>
   </div>
 </td>
@@ -977,13 +679,13 @@ This will fail if two or more includes rely on each other. If you get an error a
 <tr class="ddoc_param_row">
   <td scope="ddoc_param_id">
   <code class="code">
-    <em class="term">__params</em>
+    <em class="term">HTTPServerResponse <code class="code">res</code></em>
   </code>
 </td>
 <td>
   <div class="ddoc_param_desc">
     <p class="para">
-      the parameters that are passed to the webpage through the render function.
+      The HTTPServerResponse
     </p>
   </div>
 </td>
@@ -991,12 +693,6 @@ This will fail if two or more includes rely on each other. If you get an error a
 
     </tbody>
   </table>
-</div>
-<div class="ddoc_returns">
-  <h4>Return Value</h4>
-  <p class="para">
-    automatically deduced function that is ran on page load.
-  </p>
 </div>
 
 </section>

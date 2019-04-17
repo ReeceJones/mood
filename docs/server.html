@@ -511,7 +511,7 @@
       <div class="dlang">
         <p class="para">
           <code class="code">
-            <span class="ddoc_anchor" id="serve"></span>string <code class="code">serve</code>(Document <code class="code">doc</code>, HTTPServerRequest <code class="code">req</code>, HTTPServerResponse <code class="code">res</code>);
+            <span class="ddoc_anchor" id="serve"></span>string <code class="code">serve</code>(Document <code class="code">doc</code>, string[] <code class="code">programOutput</code>);
 
           </code>
         </p>
@@ -556,27 +556,13 @@
 <tr class="ddoc_param_row">
   <td scope="ddoc_param_id">
   <code class="code">
-    <em class="term">HTTPServerRequest <code class="code">req</code></em>
+    <em class="term">string[] <code class="code">programOutput</code></em>
   </code>
 </td>
 <td>
   <div class="ddoc_param_desc">
     <p class="para">
-      vibe.d HTTPServerRequest that contains information about the requested page.
-    </p>
-  </div>
-</td>
-</tr>
-<tr class="ddoc_param_row">
-  <td scope="ddoc_param_id">
-  <code class="code">
-    <em class="term">HTTPServerResponse <code class="code">res</code></em>
-  </code>
-</td>
-<td>
-  <div class="ddoc_param_desc">
-    <p class="para">
-      vibe.d HTTPServerResponse that contains information about the resulting page.
+      The output of the program exeuction that is used to re-construct the webpage.
     </p>
   </div>
 </td>
