@@ -18,6 +18,13 @@ import mood.parser;
 @property HTTPServerRequestDelegateS moodRender(string file, params...)()
 {
     pragma(msg, "Compiling " ~ file ~ "...");
+
+    static foreach(i, p; params)
+    {
+        static if (__traits(identifier, params[i]) == "outputStream" || __traits(identifier, params[i]) == "req" || __traits(identifier, params[i]) == "res")
+            static assert(0, "Compilation error in file " ~ file ~ ": parameter name " ~ __traits(identifier, params[i]) ~ " uses a reserved name. Please choose a different parameter name.");
+    }
+
     // parse the HTML document into something the parser can read
 	enum tokens = tokenizeDHTML(import(file));
     // parse the tokens into nodes that the compile can read
