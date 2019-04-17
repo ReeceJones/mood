@@ -17,9 +17,6 @@ import mood.parser;
 */
 @property HTTPServerRequestDelegateS moodRender(string file, params...)()
 {
-    // compile our document
-    // static doc = compile!(file, params);
-
     pragma(msg, "Compiling " ~ file ~ "...");
     // parse the HTML document into something the parser can read
 	enum tokens = tokenizeDHTML(import(file));
@@ -30,7 +27,7 @@ import mood.parser;
     // create our program
     enum program = compileProgram!(linkedNodes, params);
     // compile into optimized document
-    enum doc = compile!(linkedNodes, params);
+    enum doc = compile!(linkedNodes);
 
 
     // serve our document

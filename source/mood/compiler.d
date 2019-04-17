@@ -24,7 +24,6 @@ struct DocumentNode
     string content = "";    /// The string content of the section.
 }
 
-alias FnEntryPoint = void function(ref string[] outputStream, HTTPServerRequest req, HTTPServerResponse res, ...);
 
 /**
  * A struct that represents a compiled webpage
@@ -35,47 +34,6 @@ struct Document
 {
     DocumentNode[] nodes = [];                                                                          /// The individual document nodes that make a page.
     uint codeSections = 0;                                                                              /// The number of code sections
-    FnEntryPoint entrypoint; /// Entrypoint function for the page. Called on page load.
-}
-
-/// A block of code that is inserted into the beginning of every webpage program so that it can have output functionality.
-immutable string outputCodeStub = `import _stub = std.conv: text;
-void output(T...)(T Args)
-{
-    foreach(arg; Args)
-    {
-        outputStream[$-1] ~= _stub.text(arg); 
-    }
-}
-`;
-
-string extendParameters(params...)()
-{
-    string code = "";
-    static foreach(i, p; params)
-    {
-        code ~= ", " ~ typeof(params[i]).stringof ~ " " ~ __traits(identifier, params[i]);
-    }
-    return code;
-}
-
-/**
- * Creates the program source for a webpage.
- *
- * Creates the source code for a webpage by taking in all the nodes of the webpage and determining if its a code section or not.
- *
- * Params:
- *  nodes = The nodes of the webpage.
- * Returns: Source code of the program that is mixin'd
-*/
-string createProgram(Node[] nodes, params...)()
-{
-    string code = "(ref string[] outputStream, HTTPServerRequest req, HTTPServerResponse res" ~ extendParameters!params ~ "){ outputStream = [\"\"];\n" ~ outputCodeStub;
-    foreach(node; nodes)
-        if (node.tagType == TagType.Code)
-            code ~= node.content ~ "\n outputStream ~= \"\";\n";
-    code ~= "\n}";
-    return code;
 }
 
 /**
@@ -126,60 +84,92 @@ Node[] link(Node[] nodes)()
  *  __nodes = The webpage nodes.
  * Returns: Compiled Document that represents the webpage.
 */
-Document compile(Node[] __nodes, __params...)()
+Document compile(Node[] nodes)()
 {
-    Document __doc; // resulting document
-    __doc.nodes ~= DocumentNode.init; // start off with a blank document node
-    static foreach(__node; __nodes)
+    Document doc; // resulting document
+    doc.nodes ~= DocumentNode.init; // start off with a blank document node
+    static foreach(node; nodes)
     {
         // continue not work well in static foreach
-        static if (shrink && __node.nodeType == NodeType.Content && __node.content.strip.length == 0) {}
+        static if (shrink && node.nodeType == NodeType.Content && node.content.strip.length == 0) {}
         else
         {
             // add a new section if we hit a code section
-            static if (__node.tagType == TagType.Code)
+            static if (node.tagType == TagType.Code)
             {
-                __doc.codeSections++;
-                __doc.nodes ~= DocumentNode(true, false, __node.content);
-                __doc.nodes ~= DocumentNode.init;
+                doc.codeSections++;
+                doc.nodes ~= DocumentNode(true, false, node.content);
+                doc.nodes ~= DocumentNode.init;
             }
             else
-                __doc.nodes[$-1].content ~= __node.original; // otherwise add the string contents
+                doc.nodes[$-1].content ~= node.original; // otherwise add the string contents
         }
     }
 
-    // create the page's program
-    // enum prog = createProgram!(__nodes, __params);
-    // pragma(msg, prog);
-    // __doc.entrypoint = mixin(prog);
-    return __doc;
+    return doc;
 }
 
-auto compileProgram(Node[] __nodes, __params...)()
+
+/// A block of code that is inserted into the beginning of every webpage program so that it can have output functionality.
+immutable string outputCodeStub = `import _stub = std.conv: text;
+void output(T...)(T Args)
 {
-    return mixin(createProgram!(__nodes, __params));
+    foreach(arg; Args)
+    {
+        outputStream[$-1] ~= _stub.text(arg); 
+    }
+}
+`;
+
+/**
+ * Converts template parameters to function parameters.
+ *
+ * Used to convert template parameters into the function parameters that are passed to the executable function on page load.
+ * 
+ * Params:
+ *  params = The params that are to be converted.
+ * Returns: The resulting code from the conversion.
+*/
+string extendParameters(params...)()
+{
+    string code = "";
+    static foreach(i, p; params)
+    {
+        code ~= ", " ~ typeof(params[i]).stringof ~ " " ~ __traits(identifier, params[i]);
+    }
+    return code;
 }
 
 /**
- * Compiles a file into a Document.
+ * Creates the program source for a webpage.
  *
- * Takes a file that contains all the code for the webpage, then turns it into an optimized webpage by creating the entrypoint function, of the app, and shortening the normal html content into as few nodes as possible.
+ * Creates the source code for a webpage by taking in all the nodes of the webpage and determining if its a code section or not.
  *
  * Params:
- *  file = The file to laod.
- * Returns: Compiled Document that represents the webpage.
+ *  nodes = The nodes of the webpage.
+ * Returns: Source code of the program that is mixin'd
 */
-Document compile(string file, params...)()
+string createProgram(Node[] nodes, params...)()
 {
-    pragma(msg, "Compiling " ~ file ~ "...");
-    // parse the HTML document into something the parser can read
-	enum tokens = tokenizeDHTML(import(file));
-    // parse the tokens into nodes that the compile can read
-    enum nodes = parseDHTML(tokens);
-    // resolve includes
-    enum linkedNodes = link!(nodes)();
-    // create our program
-    enum program = compileProgram!(linkedNodes, params);
-    // compile into optimized document
-    return compile!(linkedNodes, params);
+    string code = "(ref string[] outputStream, HTTPServerRequest req, HTTPServerResponse res" ~ extendParameters!params ~ "){ outputStream = [\"\"];\n" ~ outputCodeStub;
+    foreach(node; nodes)
+        if (node.tagType == TagType.Code)
+            code ~= node.content ~ "\n outputStream ~= \"\";\n";
+    code ~= "\n}";
+    return code;
+}
+
+/**
+ * Creates executable program for a webpage
+ * 
+ * Takes in a set of nodes and parameters and creates the executable function that is used to run code on a webpage
+ * 
+ * Params:
+ *  __nodes = The nodes of the webpage itself
+ * __params = the parameters that are passed to the webpage through the render function.
+ * Returns: auto-matically deduced function that is ran on page load.
+*/
+auto compileProgram(Node[] __nodes, __params...)()
+{
+    return mixin(createProgram!(__nodes, __params));
 }

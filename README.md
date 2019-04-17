@@ -57,5 +57,6 @@ Note: template, main, and object tags are not supported.
 ## Future Plans
 + Pass parameters similarly to how you would with diet.
 + Add ability to hook render function.
++ More in-depth compilation error reporting.
 ## Contributing
 If you have a suggestion, bug fix, or want a feature added, submit a PR, or an issue. Feedback is appreciated :)
