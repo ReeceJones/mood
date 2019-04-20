@@ -79,6 +79,78 @@ string[] tokenizeDHTML(string dhtml)
     }
     return tokens;
 }
+private string[] removeJunk(string[] data)
+{
+    import std.string: strip;
+    string[] sanitized;
+    foreach(tok; data)
+    {
+        if (tok.strip.length > 0)
+            sanitized ~= tok;
+    }
+    return sanitized;
+}
+
+unittest
+{
+    /* Test 1 */
+    writeln("starting parsing test 1");
+    string html = 
+    `<!DOCTYPE html>
+    <html>
+        <head>
+            <title>hello world</title>
+        </head>
+        <body>
+            <h1>Hello World!</h1>
+            <p>lorem ipsum text</p>
+        </body>
+    </html>`;
+    string[] tokens;
+    tokens = tokenizeDHTML(html).removeJunk;
+    writeln(tokens);
+    assert(tokens[0] == "<!DOCTYPE html>");
+    assert(tokens[1] == "<html>");
+    assert(tokens[2] == "<head>");
+    assert(tokens[3] == "<title>");
+    assert(tokens[4] == "hello world");
+    assert(tokens[5] == "</title>");
+    assert(tokens[6] == "</head>");
+    assert(tokens[7] == "<body>");
+    assert(tokens[8] == "<h1>");
+    assert(tokens[9] == "Hello World!");
+    assert(tokens[10] == "</h1>");
+    assert(tokens[11] == "<p>");
+    assert(tokens[12] == "lorem ipsum text");
+    assert(tokens[13] == "</p>");
+    assert(tokens[14] == "</body>");
+    assert(tokens[15] == "</html>");
+
+    /* Test 2 */
+    writeln("starting test 2");
+    html = 
+`<!DOCTYPE html>
+<?D
+    import std.stdio;
+/?>
+<html>
+    <body>
+        <?D
+            output("Hello World");
+        /?>
+    </body>
+</html>`;
+    tokens = tokenizeDHTML(html).removeJunk;
+    writeln(tokens);
+    assert(tokens[1] == 
+`<?D
+    import std.stdio;
+/?>`);
+    assert(tokens[4] == 
+        `<?D
+            output("Hello World");
+        /?>`);
+}
 
 /**
  * Parses tokenized html data.
