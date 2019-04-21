@@ -58,7 +58,7 @@ private Node[] importAndParse(string file)()
  *  nodes = The nodes of the current webpage that are to be parsed over.
  * Returns: The resulting webpage with all includes inserted into it.
 */
-Node[] link(Node[] nodes)()
+Node[] link(const Node[] nodes)()
 {
     Node[] result;
     static foreach(node; nodes)
@@ -84,7 +84,7 @@ Node[] link(Node[] nodes)()
  *  nodes = The webpage nodes.
  * Returns: Compiled Document that represents the webpage.
 */
-Document compile(Node[] nodes)()
+Document compile(const Node[] nodes)()
 {
     Document doc; // resulting document
     doc.nodes ~= DocumentNode.init; // start off with a blank document node
@@ -149,7 +149,7 @@ string extendParameters(params...)()
  *  nodes = The nodes of the webpage.
  * Returns: Source code of the program that is mixin'd
 */
-string createProgram(Node[] nodes, params...)()
+string createProgram(const Node[] nodes, params...)()
 {
     string code = "(ref string[] outputStream, HTTPServerRequest req, HTTPServerResponse res" ~ extendParameters!params ~ "){ outputStream = [\"\"];\n" ~ outputCodeStub;
     foreach(node; nodes)
@@ -169,7 +169,7 @@ string createProgram(Node[] nodes, params...)()
  * __params = the parameters that are passed to the webpage through the render function.
  * Returns: automatically deduced function that is ran on page load.
 */
-auto compileProgram(Node[] __nodes, __params...)()
+auto compileProgram(const Node[] __nodes, __params...)()
 {
     return mixin(createProgram!(__nodes, __params));
 }

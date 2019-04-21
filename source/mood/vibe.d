@@ -43,6 +43,7 @@ import mood.hook;
         moodCallHooks(req, res);
         string[] output;
         program(output, req, res, params);
-        res.writeBody(doc.serve(output), "text/html; charset=utf-8");
+        string document = doc.serve(output);
+        res.writeBody(document, "text/html; charset=utf-8");
     };
 }

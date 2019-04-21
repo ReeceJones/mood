@@ -13,7 +13,7 @@ import mood.node;
  *  dhtml = The html that is to be tokenized.
  * Returns: Tokenized html in the form of a string array.
 */
-string[] tokenizeDHTML(string dhtml)
+string[] tokenizeDHTML(const string dhtml)
 {
     string[] tokens = [""];
     bool inCode = false;
@@ -79,7 +79,7 @@ string[] tokenizeDHTML(string dhtml)
     }
     return tokens;
 }
-private string[] removeJunk(string[] data)
+private string[] removeJunk(const string[] data)
 {
     import std.string: strip;
     string[] sanitized;
@@ -161,7 +161,7 @@ unittest
  *  tokens = The tokens that are output from tokenizing the html data.
  * Returns: Parsed html nodes.
 */
-Node[] parseDHTML(string[] tokens)
+Node[] parseDHTML(const string[] tokens)
 {
     Node[] nodes;
     Node current;

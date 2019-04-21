@@ -14,7 +14,7 @@ import vibe.http.server: HTTPServerResponse, HTTPServerRequest, HTTPServerReques
  *  programOutput = The output of the program exeuction that is used to re-construct the webpage.
  * Returns: String representation of the reconstructed webpage.
 */
-string serve(Document doc, string[] programOutput)
+string serve(const Document doc, string[] programOutput)
 {
     // resulting webpage in string representation
     string output;
