@@ -23,8 +23,11 @@ string serve(const Document doc, string[] programOutput)
         // if its a code section, collect output, and insert into webpage
         if (dn.code)
         {
-            output ~= programOutput[0];
-            programOutput = programOutput[1..$];
+            if (programOutput.length > 0)
+            {
+                output ~= programOutput[0];
+                programOutput = programOutput[1..$];
+            }
         }
         else
             output ~= dn.content;
