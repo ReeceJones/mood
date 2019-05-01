@@ -17,9 +17,15 @@ string[] tokenizeDHTML(const string dhtml)
 {
     string[] tokens = [""];
     bool inCode = false;
+    ubyte skipper = 0;
     string codeType = "";
     foreach(i, c; dhtml)
     {
+        if (skipper > 0)
+        {
+            skipper--;
+            continue;
+        }
         if (c == '>')
         {
             if (inCode)
@@ -50,7 +56,7 @@ string[] tokenizeDHTML(const string dhtml)
             }
             else
             {
-                tokens [$-1] ~= c;
+                tokens[$-1] ~= c;
                 tokens ~= "";
             }
         }
@@ -73,6 +79,21 @@ string[] tokenizeDHTML(const string dhtml)
             }
             
             tokens ~= ("" ~ c);
+        }
+        else if (i + 1 < dhtml.length && dhtml[i..i+2] == "{{" && !inCode)
+        {
+            inCode = true;
+            codeType = "insert";
+            tokens ~= ("" ~ c);
+        }
+        else if (inCode && codeType == "insert" && i + 1 < dhtml.length && dhtml[i..i+2] == "}}")
+        {
+            inCode = false;
+            codeType = "";
+            tokens[$-1] ~= cast(string)[c, dhtml[i+1]];// ~ dhtml[i+1];
+            // tokens[$-1] ~= dhtml[i+1];
+            tokens ~= "";
+            skipper = 1;
         }
         else
             tokens[$-1] ~= c;
@@ -150,6 +171,22 @@ unittest
         `<?D
             output("Hello World");
         /?>`);
+
+
+    /* Test 3 */
+    writeln("starting test 3");
+    html =
+`<!DOCTYPE html>
+<html>
+    {{ variable }}
+</html>`;
+
+    tokens = tokenizeDHTML(html).removeJunk;
+    writeln(tokens);
+    assert(tokens[0] == "<!DOCTYPE html>");
+    assert(tokens[1] == "<html>");
+    assert(tokens[2] == "{{ variable }}");
+    assert(tokens[3] == "</html>");
 }
 
 /**
@@ -203,6 +240,8 @@ Node[] parseDHTML(const string[] tokens)
             current.tagType = TagType.None;
         else if (tok.length >= 3 && tok[0..3] == "<?D")
             current.tagType = TagType.Code;
+        else if (tok.length >= 2 && tok[0..2] == "{{")
+            current.tagType = TagType.Insert;
         else
             current.tagType = TagType.Tag;
         // next determine the attributes if its a tag
@@ -272,6 +311,10 @@ Node[] parseDHTML(const string[] tokens)
         else if (current.tagType == TagType.Code)
         {
             current.content = tok[3..$-3];
+        }
+        else if (current.tagType == TagType.Insert)
+        {
+            current.content = tok[2..$-2];
         }
 
 

@@ -15,7 +15,8 @@ enum TagType
     None,   /// Default, used for content
     Tag,    /// Normal HTML tag
     Code,   /// Code tag
-    Comment /// Comment tag
+    Comment, /// Comment tag
+    Insert
 }
 
 /// The type of attribute

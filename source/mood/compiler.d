@@ -101,6 +101,12 @@ Document compile(const Node[] nodes)()
                 doc.nodes ~= DocumentNode(true, false, node.content);
                 doc.nodes ~= DocumentNode.init;
             }
+            else static if (node.tagType == TagType.Insert)
+            {
+                doc.codeSections++;
+                doc.nodes ~= DocumentNode(true, false, "output(" ~ node.content ~ ");\n");
+                doc.nodes ~= DocumentNode.init;
+            }
             else
                 doc.nodes[$-1].content ~= node.original; // otherwise add the string contents
         }
