@@ -104,7 +104,7 @@ Document compile(const Node[] nodes)()
             else static if (node.tagType == TagType.Insert)
             {
                 doc.codeSections++;
-                doc.nodes ~= DocumentNode(true, false, "output(" ~ node.content ~ ");\n");
+                doc.nodes ~= DocumentNode(true, false, node.content);
                 doc.nodes ~= DocumentNode.init;
             }
             else
@@ -161,6 +161,8 @@ string createProgram(const Node[] nodes, params...)()
     foreach(node; nodes)
         if (node.tagType == TagType.Code)
             code ~= node.content ~ "\n outputStream ~= \"\";\n";
+        else if (node.tagType == TagType.Insert)
+            code ~= "output(" ~ node.content ~ ");\n outputStream ~= \"\";\n";
     code ~= "\n}";
     return code;
 }
@@ -177,5 +179,6 @@ string createProgram(const Node[] nodes, params...)()
 */
 auto compileProgram(const Node[] __nodes, __params...)()
 {
+    pragma(msg, createProgram!(__nodes, __params));
     return mixin(createProgram!(__nodes, __params));
 }

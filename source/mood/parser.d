@@ -232,6 +232,8 @@ Node[] parseDHTML(const string[] tokens)
             current.nodeType = NodeType.ClosingTag;
         else if (tok[0] == '<')
             current.nodeType = NodeType.OpeningTag;
+        else if (tok.length >= 2 && tok[0..2] == "{{")
+            current.nodeType = NodeType.OpeningTag;
         else
             current.nodeType = NodeType.Content;
 
