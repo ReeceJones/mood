@@ -179,6 +179,5 @@ string createProgram(const Node[] nodes, params...)()
 */
 auto compileProgram(const Node[] __nodes, __params...)()
 {
-    pragma(msg, createProgram!(__nodes, __params));
     return mixin(createProgram!(__nodes, __params));
 }
