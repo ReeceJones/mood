@@ -44,6 +44,8 @@ output("Hello World".h1([
 Note: template, main, and object tags are not supported.
 ### Parameters
 Parameters (aka aliases) are supported just like they are in diet.
+### Inserts
+Single statements that are non-void can be output to the webpage using `{{ statement }}` like most frontend frameworks.
 ## Future Plans
 + More in-depth compilation error reporting. (Hopefully by-line+char error reporting).
 ## Contributing
