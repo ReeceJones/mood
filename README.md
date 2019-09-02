@@ -25,7 +25,7 @@ You can open and close D-code tags like this:
     ...
 /?>
 ```
-Within each html file, one `HTTPServerRequest req` and one `HTTPServerResponse res` are passed as parameters, and available for use.
+Within each html file, one `HTTPServerRequest req` and one `HTTPServerResponse res` are pastitlesed as parameters, and available for use.
 Each html file also has the function `output(T...)(T args)`, which writes data to the html document, as `echo` would in PHP. You can use this like you would `writeln` in the standard library.
 ### Includes
 The syntax for includes is very simple:
@@ -49,6 +49,6 @@ Single statements that are non-void can be output to the webpage using `{{ state
 ## Future Plans
 + More in-depth compilation error reporting. (Hopefully by-line+char error reporting).
 + node.js like single-statement inserts
-    + Ex: {{ statement }} is the equivalent of <?D output(statement); /?>
+    + Ex: `{{ statement }}` is the equivalent of `<?D output(statement); /?>`
 ## Contributing
 If you have a suggestion, bug fix, or want a feature added, submit a PR, or an issue. Feedback is appreciated :)
