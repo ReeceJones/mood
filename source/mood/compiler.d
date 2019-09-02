@@ -7,6 +7,8 @@ import std.conv;
 import mood.node;
 import mood.parser;
 
+import std.traits: moduleName;
+
 import vibe.http.server: HTTPServerRequest, HTTPServerResponse;
 
 // works, but do not trust. Look more into later.
@@ -158,6 +160,13 @@ string extendParameters(params...)()
 string createProgram(const Node[] nodes, params...)()
 {
     string code = "(ref string[] outputStream, HTTPServerRequest req, HTTPServerResponse res" ~ extendParameters!params ~ "){ outputStream = [\"\"];\n" ~ outputCodeStub;
+    // resolve imports for params
+    foreach(param; params)
+    {
+        string location = moduleName!param;
+        code ~ "import " ~ location ~ ";\n";
+    }
+    
     foreach(node; nodes)
         if (node.tagType == TagType.Code)
             code ~= node.content ~ "\n outputStream ~= \"\";\n";
