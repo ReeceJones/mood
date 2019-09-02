@@ -161,10 +161,10 @@ string createProgram(const Node[] nodes, params...)()
 {
     string code = "(ref string[] outputStream, HTTPServerRequest req, HTTPServerResponse res" ~ extendParameters!params ~ "){ outputStream = [\"\"];\n" ~ outputCodeStub;
     // resolve imports for params
-    foreach(param; params)
+    foreach(i, param; params)
     {
         string location = moduleName!param;
-        code ~ "import " ~ location ~ ";\n";
+        code ~ "import " ~ location ~ " : " ~ __traits(identifier, params[i]) ~ ";\n";
     }
     
     foreach(node; nodes)
