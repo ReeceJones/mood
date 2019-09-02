@@ -21,7 +21,7 @@ router.get("/", moodRender!"index.html");
 ## Using mood
 You can open and close D-code tags like this:
 ```
-<?D
+<?Dtitle
     ...
 /?>
 ```
@@ -48,5 +48,7 @@ Parameters (aka aliases) are supported just like they are in diet.
 Single statements that are non-void can be output to the webpage using `{{ statement }}` like most frontend frameworks.
 ## Future Plans
 + More in-depth compilation error reporting. (Hopefully by-line+char error reporting).
++ node.js like single-statement inserts
+    + Ex: {{ statement }} is the equivalent of <?D output(statement); /?>
 ## Contributing
 If you have a suggestion, bug fix, or want a feature added, submit a PR, or an issue. Feedback is appreciated :)
