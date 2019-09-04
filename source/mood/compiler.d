@@ -196,6 +196,10 @@ auto compileProgram(const Node[] __nodes, __params...)()
     return mixin(createProgram!(__nodes, __params));
 }
 
+/**
+ * Translates a fully qualified name into a selective import statement.
+ * 
+ */
 private string getImportStatementFromFQN(string fqn)
 {
 	// remove the junk from the fqn
@@ -224,7 +228,9 @@ private string getImportStatementFromFQN(string fqn)
 	return "import " ~ fqn[0..idx] ~ " : " ~ fqn[idx+1..$] ~ ";";
 }
 
-
+/**
+ * Returns a list of Fully Qualified Names from a type symbol, T
+*/
 private string[] getFQNSFromSymbol(T)()
 {
 	static if (is(T == void) == true)
@@ -255,6 +261,9 @@ private string[] getFQNSFromSymbol(T)()
 	}
 }
 
+/**
+ * Returns a mixin-able import list from a list of params.
+ */
 string getImportList(params...)()
 {
 	string buffer;
