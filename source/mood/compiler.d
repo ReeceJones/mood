@@ -162,13 +162,15 @@ string extendParameters(params...)()
 string createProgram(const Node[] nodes, params...)()
 {
     string code = "(ref string[] outputStream, HTTPServerRequest req, HTTPServerResponse res" ~ extendParameters!params ~ "){ outputStream = [\"\"];\n" ~ outputCodeStub;
-    // resolve imports for params
-    
+
     foreach(node; nodes)
+	{
         if (node.tagType == TagType.Code)
             code ~= node.content ~ "\n outputStream ~= \"\";\n";
         else if (node.tagType == TagType.Insert)
             code ~= "output(" ~ node.content ~ ");\n outputStream ~= \"\";\n";
+	}
+
     code ~= "\n}";
     return code;
 }
@@ -185,11 +187,6 @@ string createProgram(const Node[] nodes, params...)()
 */
 auto compileProgram(const Node[] __nodes, __params...)()
 {
-    // import blog.post: BlogPost, Comment; // works
-    // pragma(msg, getImportStatements!__params);
-
-    // mixin(getImportStatements!__params);
-
     mixin(getImportList!__params);
 
     return mixin(createProgram!(__nodes, __params));
