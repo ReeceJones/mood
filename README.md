@@ -1,4 +1,4 @@
-86aae0645a559bcde3bc3ecc56b39021953f17ec# mood
+# mood
 ## What is mood
 mood builds on top of the core functionality of vibe.d. Instead of being a new framework, mood replaces the use of diet in favor of a more php-like system.
 ## Getting Started
