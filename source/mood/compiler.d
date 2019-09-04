@@ -243,10 +243,10 @@ private string[] getFQNSFromSymbol(T)()
 		}
 		else static if (!is(TemplateOf!T == void))
 		{
-			string[] fqns = [ fullyQualifiedName!T ];
+			string[] fqns = [ fullyQualifiedName!(TemplateOf!T) ];
 			static foreach(T; TemplateArgsOf!T)
 			{
-				fqns ~= getFQNSFromSymbol!T;
+				fqns ~= getFQNSFromSymbol!(TemplateOf!T);
 			}
 			return fqns;
 		}
