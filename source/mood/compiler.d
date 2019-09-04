@@ -8,8 +8,7 @@ import mood.node;
 import mood.parser;
 
 import std.traits: fullyQualifiedName, isBuiltinType, isAssociativeArray, isPointer, PointerTarget, TemplateArgsOf,
-                    TemplateOf, isArray;
-
+                    TemplateOf, isArray, KeyType, ValueType;
 import std.range.primitives: ElementType;
 
 import vibe.http.server: HTTPServerRequest, HTTPServerResponse;
@@ -277,4 +276,104 @@ string getImportList(params...)()
 		}
 	}
 	return buffer;
+}
+
+unittest
+{
+	import std.typecons: Tuple;
+	
+	struct S
+	{
+		string s;
+		int i;
+	}
+
+	struct F
+	{
+		S s;
+	}
+
+	struct G(T)
+	{
+		T t;
+	}
+
+	struct H(T, K)
+	{
+		T t;
+		K k;
+	}
+
+    void foo(params...)()
+    {
+        pragma(msg, "IMPORT LIST:");
+        pragma(msg, getImportList!params);
+        pragma(msg, "END");
+    }
+
+    immutable S[][][][F[]]* cannot;
+	S[][][][F[]]* can;
+	pragma(msg, fullyQualifiedName!(typeof(cannot)));
+	pragma(msg, (G!S).stringof);
+	pragma(msg, "isBuiltinType!void: " ~ (isBuiltinType!void).text);
+	pragma(msg, "isBuiltinType!void*: " ~ (isBuiltinType!(void*)).text);
+	pragma(msg, "ElementType!(void*): " ~ (ElementType!(void*)).stringof);
+	pragma(msg, "isBuiltinType!(typeof(cannot)): " ~ (isBuiltinType!(typeof(cannot))).text);
+	pragma(msg, "isBuiltinType!S: " ~ (isBuiltinType!S).text);
+	pragma(msg, "isPointer!(typeof(cannot)): " ~ (isPointer!(typeof(cannot))).text); 
+	pragma(msg, "isAssociativeArray!(typeof(cannot)): " ~ (isAssociativeArray!(typeof(cannot))).text); 
+	pragma(msg, "isBuiltinType!(string[S]): " ~ (isBuiltinType!(string[S])).text);
+	pragma(msg, "isBuiltinType!(string[string]: " ~ (isBuiltinType!(string[string])).text);
+	pragma(msg, "isBuiltinType!(S[]): " ~ (isBuiltinType!(S[])).text);
+	pragma(msg, "isBuiltinType!(S*): " ~ (isBuiltinType!(S*)).text);
+	pragma(msg, "isPointer!S: " ~ (isPointer!S).text);
+	pragma(msg, "isArray!S: " ~ (isArray!S).text);
+	pragma(msg, "ElementType!void: " ~ (ElementType!void).stringof);
+	pragma(msg, "is(S == void): " ~ is(S == void).text);
+	pragma(msg, "ElementType!(S*): " ~ (ElementType!(S*)).stringof);
+	pragma(msg, "isBuiltinType!(immutable(S)): " ~ (isBuiltinType!(immutable(S))).text);
+	pragma(msg, "TemplateOf!S: " ~ (TemplateOf!S).stringof);
+	pragma(msg, "ElementType!(G!F): " ~ (ElementType!(G!F)).stringof);
+
+	pragma(msg, "S: " ~ (getFQNSFromSymbol!S).text);
+	pragma(msg, "S[]: " ~ getFQNSFromSymbol!(S[]).text);
+	pragma(msg, "S*: " ~ getFQNSFromSymbol!(S*).text);
+	pragma(msg, "immutable(S[string]): " ~ (getFQNSFromSymbol!(immutable(S[string]))).text);
+	pragma(msg, typeof(cannot).stringof ~ ": " ~ getFQNSFromSymbol!(typeof(cannot)).text);
+	pragma(msg, "G!(typeof(cannot)): " ~ getFQNSFromSymbol!(G!(typeof(cannot))).text);
+	pragma(msg, "H!(S, G!(F)): " ~ getFQNSFromSymbol!(H!(S, G!(F))).text);
+	pragma(msg, "Tuple!(S, F): " ~ (getFQNSFromSymbol!(Tuple!(S, F))).text);
+
+	enum manySymbols0 = getFQNSFromSymbol!(G!(typeof(cannot)));
+	pragma(msg, "manySymbols0:");
+	static foreach(fqn; manySymbols0)
+	{
+		pragma(msg, "\t" ~ getImportStatementFromFQN(fqn));
+	}
+	enum manySumbols1 = getFQNSFromSymbol!(H!(S, G!(F)));
+	pragma(msg, "manySymbols1:");
+	static foreach(fqn; manySumbols1)
+	{
+		pragma(msg, "\t" ~ getImportStatementFromFQN(fqn));
+	}
+	enum manySymbols2 = getFQNSFromSymbol!(Tuple!(S, F));
+	pragma(msg, "manySymbols2:");
+	static foreach(fqn; manySymbols2)
+	{
+		pragma(msg, "\t" ~ getImportStatementFromFQN(fqn));
+	}
+	enum manySymbols3 = getFQNSFromSymbol!(S);
+	pragma(msg, "manySymbols3:");
+	static foreach(fqn; manySymbols3)
+	{
+		pragma(msg, "\t" ~ getImportStatementFromFQN(fqn));
+	}
+	enum manySymbols4 = getFQNSFromSymbol!(S[]);
+	pragma(msg, "manySymbols4:");
+	static foreach(fqn; manySymbols4)
+	{
+		pragma(msg, "\t" ~ getImportStatementFromFQN(fqn));
+	}
+
+	foo!(cannot, can);
 }
