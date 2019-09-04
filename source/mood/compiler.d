@@ -7,7 +7,10 @@ import std.conv;
 import mood.node;
 import mood.parser;
 
-import std.traits: moduleName;
+import std.traits: fullyQualifiedName, isBuiltinType, isAssociativeArray, isPointer, PointerTarget, TemplateArgsOf,
+                    TemplateOf, isArray;
+
+import std.range.primitives: ElementType;
 
 import vibe.http.server: HTTPServerRequest, HTTPServerResponse;
 
@@ -161,11 +164,6 @@ string createProgram(const Node[] nodes, params...)()
 {
     string code = "(ref string[] outputStream, HTTPServerRequest req, HTTPServerResponse res" ~ extendParameters!params ~ "){ outputStream = [\"\"];\n" ~ outputCodeStub;
     // resolve imports for params
-    foreach(i, param; params)
-    {
-        string location = moduleName!param;
-        code ~ "import " ~ location ~ " : " ~ __traits(identifier, params[i]) ~ ";\n";
-    }
     
     foreach(node; nodes)
         if (node.tagType == TagType.Code)
@@ -188,5 +186,86 @@ string createProgram(const Node[] nodes, params...)()
 */
 auto compileProgram(const Node[] __nodes, __params...)()
 {
+    // import blog.post: BlogPost, Comment; // works
+    // pragma(msg, getImportStatements!__params);
+
+    // mixin(getImportStatements!__params);
+
+    mixin(getImportList!__params);
+
     return mixin(createProgram!(__nodes, __params));
+}
+
+private string getImportStatementFromFQN(string fqn)
+{
+	// remove the junk from the fqn
+	uint idx = cast(uint)fqn.indexOf('(');
+	uint idx2 = cast(uint)fqn.indexOf('.');
+
+	if (idx != -1 && idx2 != -1 && idx < idx2)
+		fqn = fqn[idx+1..$];
+
+	// idx = idx == -1 ? 0u : idx;
+	// fqn = fqn[idx+1..$];
+
+	char[] delimiters = [')', '(', '!', '[', ']'];
+
+
+	idx = cast(uint)fqn.length;
+	foreach(d; delimiters)
+	{
+		auto i = fqn.indexOf(d);
+		if (i != -1 && i < idx)
+			idx = cast(uint)i;
+	}
+
+	fqn = fqn[0..idx];
+	idx = cast(uint)fqn.lastIndexOf('.');
+	return "import " ~ fqn[0..idx] ~ " : " ~ fqn[idx+1..$] ~ ";";
+}
+
+
+private string[] getFQNSFromSymbol(T)()
+{
+	static if (is(T == void) == true)
+		return [];
+	else
+	{
+		// branching types
+		static if (isAssociativeArray!T == true) // associative array (hash map)
+		{
+			return getFQNSFromSymbol!(KeyType!T) ~ getFQNSFromSymbol!(ValueType!T);
+		}
+		else static if (!is(TemplateOf!T == void))
+		{
+			string[] fqns = [ fullyQualifiedName!T ];
+			static foreach(T; TemplateArgsOf!T)
+			{
+				fqns ~= getFQNSFromSymbol!T;
+			}
+			return fqns;
+		}
+		// non-branching types
+		else static if (isPointer!T == false && isArray!T == false && isBuiltinType!T == false) // raw type
+			return [ fullyQualifiedName!T ];
+		else static if (isPointer!T == true && isBuiltinType!T == false) // pointer type
+			return getFQNSFromSymbol!(PointerTarget!T);
+		else
+			return getFQNSFromSymbol!(ElementType!T); // range type, so return the next lower type
+	}
+}
+
+string getImportList(params...)()
+{
+	string buffer;
+	string[] fqns;
+	static foreach(param; params)
+	{
+		fqns = getFQNSFromSymbol!(typeof(param));
+		foreach(fqn; fqns)
+		{
+			buffer ~= getImportStatementFromFQN(fqn) ~ "\n";
+		}
+	}
+	return buffer;
 }
